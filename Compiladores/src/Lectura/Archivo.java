@@ -1,17 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Lectura;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author Orlando Odiseo Belmonte Flores
@@ -25,18 +11,25 @@ import javax.swing.JOptionPane;
  * @fecha de entrega 24/01/2020
  * 
  */
+
+package Lectura;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+
 public class Archivo {
-    private JFileChooser file;
+    //private JFileChooser file;
     private File abre;
     private FileReader archivo;
     private BufferedReader lee;
     
     public Archivo() {
-        file = new JFileChooser();
-        file.showOpenDialog(file);
-        
+
         try {
-            abre = file.getSelectedFile();
+            abre = new File("wop.txt");
 
             if(abre != null) {
                 archivo = new FileReader(abre);
@@ -63,4 +56,29 @@ public class Archivo {
         }
         return c;
     }
+    private boolean caracterValido(char x){
+        //char x = readCharacter();
+        return ((byte)x>64 && (byte)x<91 ) || ( (byte)x>96 && (byte)x<123 ) || ( (byte) x == 95); 
+    }
+    private boolean numValido(char x){
+        return ( (byte)x>47 && (byte)x<58 ); 
+    }
+    
+     public String cadenaAvil(){
+        String aux="";
+        char x = readCharacter();
+//        System.out.println(x);
+        if (caracterValido(x)){
+            aux +=x;
+            x = readCharacter();
+//            System.out.println(x);
+            while (caracterValido(x) || numValido(x)){
+                aux +=x;
+                x = readCharacter();
+//                System.out.println(x);
+            }
+        }
+        if (aux.equals("")) return "Parche de NullPointerExeption"; 
+        return aux;
+    } 
 }
