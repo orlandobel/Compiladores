@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 package Lectura;
-
-import Lectura.Archivo;
 /**
  *
  * @author Alumno
@@ -15,10 +13,12 @@ public class main {
         Archivo archivo = new Archivo();
         char x = '\n';
         
-        for(int i=0;i<10;i++) {
-            x = archivo.readCharacter();
-        }
+        System.out.println(archivo.cadenaAvil());
         
-        System.out.println(x);
+//        for(int i=0;i<10;i++) {
+//            x = archivo.readCharacter();
+//        }
+        
+        
     }
 }
