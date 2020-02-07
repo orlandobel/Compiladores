@@ -8,7 +8,7 @@
  * @programa Sistemas computacionales
  * @uniad de aprendizaje Arquitectura de los compiladores e interpretes
  * @maestra Karina Mejia Rodrígez 
- * @fecha de entrega 24/01/2020
+ * @fecha de entrega 07/02/2020
  * 
  */
 
@@ -35,7 +35,7 @@ public class Archivo {
                 archivo = new FileReader(abre);
                 lee = new BufferedReader(archivo);
                 
-                String aux;
+//                String aux;
 //                while((aux  = lee.readLine()) != null) {
 //                    System.out.println(aux);
 //                }
@@ -68,15 +68,38 @@ public class Archivo {
         String aux="\n";
         char x = readCharacter();
 //        System.out.println(x);
+
         if (caracterValido(x)){
             aux =""+x;
             x = readCharacter();
 //            System.out.println(x);
+
             while (caracterValido(x) || numValido(x)){
                 aux +=x;
                 x = readCharacter();
 //                System.out.println(x);
             }
+        } else if(numValido(x)) {
+            aux += x;
+            x = this.readCharacter();
+
+            while(numValido(x)) {
+                aux += x;
+                x = this.readCharacter();
+            }
+
+            if((byte)x == 46) {
+                x = this.readCharacter();
+                if(numValido(x)) {
+                    aux += "."+x;
+                    x = this.readCharacter();
+                    while(numValido(x)) {
+                        aux += x;
+                        x = this.readCharacter();
+                    }
+                }
+            }
+            
         }
  //       if (aux.equals("")) return "Parche de NullPointerExeption"; 
         return aux;
