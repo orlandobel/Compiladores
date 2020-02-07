@@ -65,11 +65,11 @@ public class Archivo {
     }
     
      public String cadenaAvil(){
-        String aux="";
+        String aux="\n";
         char x = readCharacter();
 //        System.out.println(x);
         if (caracterValido(x)){
-            aux +=x;
+            aux =""+x;
             x = readCharacter();
 //            System.out.println(x);
             while (caracterValido(x) || numValido(x)){
@@ -78,7 +78,7 @@ public class Archivo {
 //                System.out.println(x);
             }
         }
-        if (aux.equals("")) return "Parche de NullPointerExeption"; 
+ //       if (aux.equals("")) return "Parche de NullPointerExeption"; 
         return aux;
     } 
 }
