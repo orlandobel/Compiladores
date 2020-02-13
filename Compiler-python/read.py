@@ -1,6 +1,9 @@
+from cE import carEsp as c
+
 class Read:
     def __init__(self):
         self.file = open("test.txt","r")
+        self.x = ''
 ## Operaciones booleanas para crear cualquier cadena
         self.numbers = lambda x : (ord(x) > 46 and ord(x) < 58);
         self.upperKy = lambda x : (ord(x) > 64 and ord(x) < 91);
@@ -11,46 +14,47 @@ class Read:
         self.anyLetter =  lambda x : (self.firstLetter(x) or self.numbers(x));
 
 
-    def readSpecialWord(self, nWord):
-        if self.file.read(len(nWord)) == nWord:
-            self.readChar()
-            return nWord
-        return "Syntaxis Error"
+    def EspCarcter(self):
+        valRead = self.x+self.readChar()
+        for special in c:
+            if (valRead == special):
+                self.x= self.readChar()
+                return special
+        return ""
 
     def readChar(self):
         return self.file.read(1)
 
     def exprecion(self):
         cadena = ""
-        x = self.readChar()
+        if (self.x == ''):
+            self.x = self.readChar()
 
-        if(self.firstLetter(x)):
-            cadena += x
-            x = self.readChar()
+        if(self.firstLetter(self.x)):
+            cadena += self.x
+            self.x = self.readChar()
 
-            while(self.anyLetter(x)):
-                cadena += x
-                x = self.readChar()
+            while(self.anyLetter(self.x)):
+                cadena += self.x
+                self.x = self.readChar()
 
         return cadena
 
     def expNum(self):
         cadena=""
-        x = self.readChar()
-        if (x == '-'):
-            cadena += x
-            x = self.readChar()
-        if (self.numbers(x)):
-            while(self.numbers(x)):
-                cadena += x
-                x = self.readChar()
-            if(x == '.'):
-                cadena += x
-                x = self.readChar()
-                if (self.numbers(x)):
-                    while(self.numbers(x)):
-                        cadena += x
-                        x = self.readChar()
+        if (self.x == ''):
+            self.x = self.readChar()
+        if (self.numbers(self.x)):
+            while(self.numbers(self.x)):
+                cadena += self.x
+                self.x = self.readChar()
+            if(self.x == '.'):
+                cadena += self.x
+                self.x = self.readChar()
+                if (self.numbers(self.x)):
+                    while(self.numbers(self.x)):
+                        cadena += self.x
+                        self.x = self.readChar()
                 else:
                     cadena = ""
         return cadena;
