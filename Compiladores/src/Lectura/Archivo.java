@@ -25,7 +25,7 @@ public class Archivo {
     private File abre;
     private FileReader archivo;
     private BufferedReader lee;
-    
+    private char x;
     public Archivo() {
 
         try {
@@ -34,7 +34,7 @@ public class Archivo {
             if(abre != null) {
                 archivo = new FileReader(abre);
                 lee = new BufferedReader(archivo);
-                
+                x = readCharacter();
 //                String aux;
 //                while((aux  = lee.readLine()) != null) {
 //                    System.out.println(aux);
@@ -65,8 +65,7 @@ public class Archivo {
     }
     
      public String cadenaAvil(){
-        String aux="\n";
-        char x = readCharacter();
+        String aux = "";
 //        System.out.println(x);
 
         if (caracterValido(x)){
@@ -99,7 +98,58 @@ public class Archivo {
                     }
                 }
             }
-            
+        } else if(x == (byte)205) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)255 || x == (byte)45 || x == (byte)43 || x == (byte)33) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)33) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)33) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)63) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)63) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)45) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)33 || x == (byte)45 || x == (byte)205) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)43) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)33 || x == (byte)43 || x == (byte)205) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)42) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)42 || x ==(byte)205) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else if(x == (byte)47) {
+            aux += x;
+            x = readCharacter();
+            if(x == (byte)47 || x ==(byte)205) {
+                aux += x;
+                x = readCharacter();
+            }
+        } else {
+            aux += x;
+            x = readCharacter();
         }
  //       if (aux.equals("")) return "Parche de NullPointerExeption"; 
         return aux;
