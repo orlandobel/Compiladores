@@ -14,6 +14,10 @@ public class main {
         char x = '\n';
         
         System.out.println(archivo.cadenaAvil());
+        System.out.println(archivo.cadenaAvil());
+        System.out.println(archivo.cadenaAvil());
+        System.out.println(archivo.cadenaAvil());
+        System.out.println(archivo.cadenaAvil());
         
 //        for(int i=0;i<10;i++) {
 //            x = archivo.readCharacter();
