@@ -1,5 +1,5 @@
 from cE import carEsp as c
-
+from cE import Operacion as op
 class Read:
     def __init__(self):
         self.file = open("test.txt","r")
@@ -15,35 +15,41 @@ class Read:
 
 
     def EspCarcter(self):
-        valRead = self.x+self.readChar()
-        for special in c:
-            if (valRead == special):
-                self.x= self.readChar()
-                return special
-        return ""
+        valRead = self.x
+        if valRead in op:
+            self.x = self.readChar()
+            aux = valRead+self.x
+            if aux in c:
+                valRead = aux
+                self.x = self.readChar()
+        else:
+            self.x = self.readChar()
+        return valRead
 
     def readChar(self):
         return self.file.read(1)
 
     def exprecion(self):
         cadena = ""
-        if (self.x == ''):
+
+        if (self.x == ""):
             self.x = self.readChar()
 
         if(self.firstLetter(self.x)):
             cadena += self.x
             self.x = self.readChar()
-
             while(self.anyLetter(self.x)):
                 cadena += self.x
                 self.x = self.readChar()
+        elif(self.numbers(self.x)):
+            cadena += self.expNum()
+        else:
+            cadena += self.EspCarcter()
 
         return cadena
 
     def expNum(self):
         cadena=""
-        if (self.x == ''):
-            self.x = self.readChar()
         if (self.numbers(self.x)):
             while(self.numbers(self.x)):
                 cadena += self.x
@@ -58,3 +64,13 @@ class Read:
                 else:
                     cadena = ""
         return cadena;
+
+#    def ifStatement(self):
+#        if (self.exprecion()=="if"):
+#            self.x = self.readChar()
+#            if (self.x == '('):
+#                self.exprecion()
+#                self.EspCarcter()
+#                self.exprecion()
+#                self.x = self.readChar()
+#                if(self.x == ')'):
