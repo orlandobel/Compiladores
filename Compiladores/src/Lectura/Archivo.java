@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Archivo {
@@ -47,6 +48,19 @@ public class Archivo {
         }
     }
     
+    public ArrayList leerArchivo() {
+        ArrayList<String> palabras = new ArrayList<>();
+        String aux = cadenaAvil();
+        while(!aux.equals("\uffff")) {
+            if(!aux.equals(" ") && !aux.equals("\n")) {
+                palabras.add(aux);
+            }
+            aux = cadenaAvil();
+        }
+        
+        return palabras;
+    }
+    
     public char readCharacter() {
         char c = '\n';
         try {
@@ -56,10 +70,12 @@ public class Archivo {
         }
         return c;
     }
+    
     private boolean caracterValido(char x){
         //char x = readCharacter();
         return ((byte)x>64 && (byte)x<91 ) || ( (byte)x>96 && (byte)x<123 ) || ( (byte) x == 95); 
     }
+    
     private boolean numValido(char x){
         return ( (byte)x>47 && (byte)x<58 ); 
     }
