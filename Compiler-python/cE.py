@@ -4,6 +4,10 @@ carEsp=(
     "<<", ">>");
 
 Operacion=(
-    "=", "+", "-", "*", "/"
+    "=", "+", "-", "*", "/", "[","]","(",")",";"
+);
+
+identificador = (
+    "const", "num", "void", "ztronk", "bool", "while", "if", "else"
 );
 ##print(carEsp)

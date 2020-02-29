@@ -1,10 +1,11 @@
-from read import Read
+import lexic
 
-reader = Read()
-print(reader.exprecion())
-print(reader.exprecion())
-print(reader.exprecion())
-print(reader.exprecion())
-print(reader.exprecion())
+l = lexic.Lexic()
+r = lexic.read.Read()
 
-##print(reader.exprecion())
+
+print(l.Lectura())
+print(l.Lectura())
+print(l.Lectura())
+print(l.Lectura())
+print(l.Lectura())

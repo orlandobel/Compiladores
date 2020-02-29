@@ -15,6 +15,11 @@ class Read:
 
 
     def EspCarcter(self):
+        if (self.x == "" or self.x== " " or self.x== "\n"):
+            aux =self.x
+            self.x = self.readChar()
+            return aux
+
         valRead = self.x
         if valRead in op:
             self.x = self.readChar()
@@ -24,6 +29,10 @@ class Read:
                 self.x = self.readChar()
         else:
             self.x = self.readChar()
+            aux = valRead+self.x
+            if aux in c:
+                valRead = aux
+                self.x = self.readChar()
         return valRead
 
     def readChar(self):
@@ -32,7 +41,7 @@ class Read:
     def exprecion(self):
         cadena = ""
 
-        if (self.x == ""):
+        if (self.x == "" or self.x == " "):
             self.x = self.readChar()
 
         if(self.firstLetter(self.x)):
