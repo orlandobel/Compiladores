@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class Lexico {
     private List<String> tabla;
+    public static ArrayList<String> identificadores;
     
     public Lexico() {
         String[] palabras = {
@@ -55,14 +56,20 @@ public class Lexico {
         };
         
         tabla = Arrays.asList(palabras);
+        identificadores = new ArrayList<>();
     }
     
-    public boolean verificar(String s) {
-        if(tabla.contains(s) || palabraValida(s) || numValido(s)) {
-            return true;
+    public String verificar(String s) {
+        if(tabla.contains(s)) {
+            return s;
+        } else if(palabraValida(s)) {
+            identificadores.add(s);
+            return "IDENTIFICADOR";
+        } else if(numValido(s)){
+            return "NUMERO";
         }
         
-        return false;
+        return "ERROR";
     }
     
     private boolean caracterValido(byte x){
@@ -99,12 +106,12 @@ public class Lexico {
         ArrayList<String> palabras = a.leerArchivo();
         
         palabras.forEach(s -> {
-            if(l.verificar(s)) {
-                System.out.println(s+" (valido)");
-            } else {
-                System.out.println(s+" (no valido)");
-            }
+            System.out.println("-----------------------");
+            System.out.println("Analizando: "+s);
+            String res = l.verificar(s);
+            System.out.println("Encontrado: "+res);
         });
         
+        System.out.println("\n"+identificadores);
     }
 }

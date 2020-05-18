@@ -52,7 +52,8 @@ public class Archivo {
         ArrayList<String> palabras = new ArrayList<>();
         String aux = cadenaAvil();
         while(!aux.equals("\uffff")) {
-            if(!aux.equals(" ") && !aux.equals("\n")) {
+            //System.out.println(aux.trim().length() == 0);
+            if(aux.trim().length() > 0) {
                 palabras.add(aux);
             }
             aux = cadenaAvil();
