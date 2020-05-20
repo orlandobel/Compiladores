@@ -11,8 +11,18 @@ import java.util.List;
 
 /**
  *
- * @author Alumno
+ * @author Orlando Odiseo Belmonte Flores
+ * @boleta 2018671281
+ * @author Guillermo Ingacio Bautista García
+ * @boleta 2018670021
+ * @evidencia Compilador(sintaxis fase 1)
+ * @programa Sistemas computacionales
+ * @uniad de aprendizaje Construcción de analizadoes sintácticos
+ * @maestra Karina Mejia Rodrígez 
+ * @fecha de entrega 20/05/2020
+ * 
  */
+
 public class Lexico {
     private List<String> tabla;
     public static ArrayList<String> identificadores;
@@ -115,3 +125,4 @@ public class Lexico {
         System.out.println("\n"+identificadores);
     }
 }
+
