@@ -1,0 +1,9 @@
+ERRORS(0) = tipos de datos
+ERRORS(1) = nombre o identificador
+ERRORS(2) = "="
+ERRORS(3) = valor
+ERRORS(4) = valor o identificador
+ERRORS(5) = [
+ERRORS(6) = ]
+errors(7) = (
+errors(8) = )
