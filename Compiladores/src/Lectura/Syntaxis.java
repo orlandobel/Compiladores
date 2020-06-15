@@ -40,81 +40,62 @@ public class Syntaxis {
         }
     }
 
-    private static void CONSTANTE() {
+    public static void TIPO() {
         i++;
-        if(tokens.get(i).equals("const")) {
-            TIPO();
-            ConstAux();
-            
+        if(tipos.contains(tokens.get(i))) {
+
         } else {
-            i--;
+            ERRORS(1);
         }
     }
 
-    private static void ConstAux() {
-        i++;
-        if(tokens.get(i).equals("nombre")) {
+    private static void CONSTANTE() {
+        if(!tipos.contains(tokens.get(i+1))) {
             i++;
-            if(tokens.get(i).equals("=")) {
-                VALOR();
-                if(tokens.get(i+1).equals(";")) {
-                    CONSTANTE();
-                } else if(tokens.get(i+1).equals(",")) {
-                    ConstAux();
-                }
+            if(tokens.get(i).equals("const")) {
+                TIPO();
+                AuxConst();
             } else {
-                ERRORS(2);
+                ERRORS(0);
             }
-        } else {
-            ERRORS(1);
         }
     }
 
     private static void VARIABLE() {
-        if(i+1<tokens.size()) {
+        if(i+1 < tokens.size()) {
             TIPO();
             if(!tokens.get(i+2).equals("[")) {
-                VarAux();
-            } else {
-                i--;
+                AuxVar();
             }
-        }
-        
-    }
-
-    private static void VarAux() {
-        i++;
-        if(tokens.get(i).equals("nombre")) {
-            i++;
-            if(tokens.get(i).equals(";")) {
-                VARIABLE();
-            } else if(tokens.get(i).equals("=")) {
-                ASIGNAR();
-                VarAux();
-            } else if(tokens.get(i).equals(",")) {
-                VarAux();
-            }
-        } else {
-            ERRORS(1);
+            
         }
     }
 
     private static void FUN() {
-        if(i+1<tokens.size()) {
-            i++;
+        if(i+1 < tokens.size()) {
             TIPO();
             i++;
-            if(tokens.get(i).equals("[")) {
-                PARAMETRO();
+            if(tokens.get(i).equals("nombre")) {
                 i++;
-                if(tokens.get(i).equals("]")) {
+                if(tokens.get(i).equals("[")) {
+                    if(!tokens.get(i+1).equals("]")) {
+                        PARAMETRO();
+                    }
+
                     i++;
-                    if(tokens.get(i).equals("(")) {
+                    if(tokens.get(i).equals("]")) {
                         i++;
-                        INSTRUCCIONES();
-                        i++;
-                        if(tokens.get(i).equals(")")) {
-                            FUN();
+                        if(tokens.get(i).equals("(")) {
+                            if(!tokens.get(i+1).equals(")")) {
+                                INSTRUCCIONES();
+                            }
+
+                            i++;
+                            if(tokens.get(i).equals(")")) {
+                                FUN();
+                            } else {
+                                ERRORS(9);
+                            }
                         } else {
                             ERRORS(8);
                         }
@@ -125,31 +106,13 @@ public class Syntaxis {
                     ERRORS(6);
                 }
             } else {
-                ERRORS(5);
+                ERRORS(2);
             }
         }
     }
 
-    public static void TIPO() {
-        i++;
-        if(tipos.contains(tokens.get(i))) {
-
-        } else {
-            ERRORS(0);
-        }
-    }
-
-    public static void VALOR() {
-        i++;
-        if(valores.contains(tokens.get(i))) {
-
-        } else {
-            ERRORS(3);
-        }
-    }
-
     private static void PARAMETRO() {
-
+        
     }
 
     private static void BUCLE() {
@@ -173,13 +136,7 @@ public class Syntaxis {
     }
 
     private static void ASIGNAR() {
-        i++;
 
-        if(valores.contains(tokens.get(i))) {
-
-        } else {
-            ERRORS(4);
-        }
     }
 
     private static void LLAMAR() {
@@ -191,7 +148,65 @@ public class Syntaxis {
     }
 
     private static void RETORNO() {
-        
+
+    }
+
+    private static void VALOR() {
+        i++;
+        if(valores.contains(tokens.get(i))) {
+
+        } else {
+            ERRORS(4);
+        }
+    }
+
+    private static void AuxConst() {
+        i++;
+        if(tokens.get(i).equals("nombre")) {
+            i++;
+            if(tokens.get(i).equals("=")) {
+                VALOR();
+                i++;
+                switch(tokens.get(i)) {
+                    case ",":
+                        AuxConst();
+                        break;
+                    case ";":
+                        CONSTANTE();
+                        break;
+                    default: 
+                        ERRORS(5);
+                        break;
+                } 
+            } else {
+                ERRORS(3);
+            }
+        } else {
+            ERRORS(2);
+        }
+    }
+
+    private static void AuxVar() {
+        i++;
+        if(tokens.get(i).equals("nombre")) {
+            i++;
+            switch(tokens.get(i)) {
+                case ",":
+                    AuxVar();
+                    break;
+                case "=":
+                    ASIGNAR();
+                    break;
+                case ";":
+                    VARIABLE();
+                    break;
+                default: 
+                    ERRORS(6);
+                    break;
+            }
+        } else {
+            ERRORS(2);
+        }
     }
 
     private static void ERRORS(int code) {
@@ -200,32 +215,34 @@ public class Syntaxis {
 
         switch(code) {
             case 0:
-                esp = "\"void\", \"num\", \"String\" o \"bool\"";
+                esp = "\"const\"";
                 break;
             case 1:
-                esp = "un nombre o identificador";
+                esp = "\"void\", \"num\", \"String\" o \"bool\"";
                 break;
             case 2:
-                esp = "\"=\"";
+                esp = "un nombre o identificador";
                 break;
             case 3:
-                esp = "un valor";
+                esp = "\"=\"";
                 break;
             case 4:
-                esp = "un valor o un identificador";
+                esp = "un valor";
                 break;
             case 5:
-                esp = "\"[\"";
+                esp = "\",\" o \";\"";
                 break;
             case 6:
-                esp = "\"]\"";
+                esp = "\",\", \"=\", \";\" o \"[\"";
                 break;
             case 7:
-                esp = "\"(\"";
+                esp = "\"]\"";
                 break;
             case 8:
-                esp = "\")\"";
+                esp = "\"(\"";
                 break;
+            case 9:
+                esp = "\")\"";
             default: break;
         }
 
