@@ -37,6 +37,8 @@ public class Lexico {
           "while",
           "if",
           "else",
+          "true",
+          "false",
           "!!",
           "??",
           "=+",
