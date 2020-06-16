@@ -10,6 +10,8 @@ public class Syntaxis {
 
     private static List<String> tipos;
     private static List<String> valores;
+    private static List<String> booleanos;
+    private static List<String> operadores;
 
     public static void setListTokens(List<String> t, List<String> p) {
         tokens = t;
@@ -21,15 +23,37 @@ public class Syntaxis {
             "String",
             "bool"
         };
-        tipos = Arrays.asList(tip);
-
         String[] val = {
             "num",
             "nombre",
             "true",
             "false"
         };
+        String[] bools = {
+            "==",
+            "=!",
+            "=+",
+            "=-",
+            "-!",
+            "=!"
+        };
+        String[] ops = {
+            "+",
+            "-",
+            "*",
+            "/",
+            "+=",
+            "-=",
+            "**",
+            "//",
+            "*=",
+            "/="
+        };
+        
+        tipos = Arrays.asList(tip);
         valores = Arrays.asList(val);
+        booleanos = Arrays.asList(bools);
+        operadores = Arrays.asList(ops);
     }
 
     public static void CUERPO() {
@@ -94,13 +118,13 @@ public class Syntaxis {
                             if(tokens.get(i).equals(")")) {
                                 FUN();
                             } else {
-                                ERRORS(9);
+                                ERRORS(10);
                             }
                         } else {
-                            ERRORS(8);
+                            ERRORS(9);
                         }
                     } else {
-                        ERRORS(7);
+                        ERRORS(8);
                     }
                 } else {
                     ERRORS(6);
@@ -112,35 +136,218 @@ public class Syntaxis {
     }
 
     private static void PARAMETRO() {
-        
+        TIPO();
+        i++;
+        if(tokens.get(i).equals("nombre")) {
+            if(!tokens.get(i+1).equals("]")) {
+                i++;
+                if(tokens.get(i).equals(",")) {
+                    PARAMETRO();
+                } else {
+                    ERRORS(11);
+                }
+            }
+        } else {
+            ERRORS(2);
+        }
     }
 
     private static void BUCLE() {
+        i++;
+        if(tokens.get(i).equals("while")) {
+            i++;
+            if(tokens.get(i).equals("[")) {
+                CONDICIONAL();
+                i++;
+                if(tokens.get(i).equals("]")) {
+                    i++;
+                    if(tokens.get(i).equals("(")) {
+                        if(!tokens.get(i+1).equals(")")) {
+                            INSTRUCCIONES();
+                        }
+                        
+                        i++;
+                        if(tokens.get(i).equals(")")) {
 
+                        } else {
+                            ERRORS(10);
+                        }
+                    } else {
+                        ERRORS(9);
+                    }
+                } else {
+                    ERRORS(8);
+                }
+            } else {
+                ERRORS(7);
+            }
+        } else {
+            ERRORS(-1);
+        }
     }
 
     private static void IF() {
+        i++;
+        if(tokens.get(i).equals("if")) {
+            i++;
+            if(tokens.get(i).equals("[")) {
+                CONDICIONAL();
+                
+                i++;
+                if(tokens.get(i).equals("]")) {
+                    i++;
+                    if(tokens.get(i).equals("(")) {
+                        if(!tokens.get(i+1).equals(")")) {
+                            INSTRUCCIONES();
+                        } 
+                        
+                        i++;
+                        if(tokens.get(i).equals(")")) {
+                            if(tokens.get(i+1).equals("else")) {
+                                i = i+2;
+                                if(tokens.get(i).equals("(")) {
+                                    if(!tokens.get(i+1).equals(")")) {
+                                        INSTRUCCIONES();
+                                    }
 
+                                    i++;
+                                    if(tokens.get(i).equals(")")) {
+
+                                    } else {
+                                        ERRORS(10);
+                                    }
+                                } else {
+                                    ERRORS(9);
+                                }
+                            }
+                        } else {
+                            ERRORS(10);
+                        }
+                    } else {
+                        ERRORS(9);
+                    }
+                } else {
+                    ERRORS(11);
+                }
+            } else {
+                ERRORS(7);
+            }
+        } else {
+            ERRORS(-1);
+        }
     }
 
     private static void CONDICIONAL() {
-
+        EXPRESION();
+        if(!tokens.get(i+1).equals("]")) {
+            i++;
+            if(booleanos.contains(tokens.get(i))) {
+                EXPRESION();
+                if(!tokens.get(i+1).equals("]")) {
+                    i++;
+                    if(tokens.get(i).equals("!!") || tokens.get(i).equals("??")) {
+                        CONDICIONAL();
+                    } else {
+                        ERRORS(13);
+                    }
+                }
+            } else {
+                ERRORS(12);
+            }
+        }
     }
 
     private static void EXPRESION() {
-
+        FACTOR();
+        if(!booleanos.contains(tokens.get(i+1)) && !tokens.get(i+1).equals("!!") && !tokens.get(i+1).equals("??") && !tokens.get(i).equals("]")) {
+            i++;
+            if(operadores.contains(tokens.get(i))) {
+                EXPRESION();
+            } else {
+                ERRORS(-1);
+            }
+        }
     }
 
     private static void FACTOR() {
+        i++;
+        if(tokens.get(i).equals("nombre") || tokens.get(i).equals("numero")) {
 
+        } else if(tokens.get(i).equals("[")) {
+            EXPRESION();
+            i++;
+            if(tokens.get(i).equals("]")) {
+
+            } else {
+                ERRORS(8);
+            }
+        } else {
+            ERRORS(14);
+        }
     }
 
     private static void ASIGNAR() {
-
+        i++;
+        switch(tokens.get(i)) {
+            case "nombre":
+                if(tokens.get(i+1).equals("[")) {
+                    i--;
+                    LLAMAR();
+                }
+                break;
+            case "numero":
+                break;
+            default:
+                ERRORS(15);
+        }
     }
 
     private static void LLAMAR() {
+        i++;
+        if(tokens.get(i).equals("nombre")) {
+            i++;
+            if(tokens.get(i).equals("[")) {
+                if(!tokens.get(i+1).equals("]")) {
+                    i++;
+                    if(tokens.get(i).equals("nombre")) {
+                        if(!tokens.get(i+1).equals("]")) {
+                            i++;
+                            if(tokens.get(i).equals(",")) {
+                                while(tokens.get(i).equals(",")) {
+                                    i++;
+                                    if(tokens.get(i).equals("nombre")) {
+                                        i++;
+                                    } else {
+                                        ERRORS(2);
+                                    }
+                                }
+                                i--;
+                            } else {
+                                ERRORS(11);
+                            }
+                        }
 
+                        i++;
+                        if(tokens.get(i).equals("]")) {
+                            i++;
+                            if(tokens.get(i).equals(";")) {
+
+                            } else {
+                                ERRORS(17);
+                            }
+                        } else {
+                            ERRORS(11);
+                        }
+                    } else {
+                        ERRORS(16);
+                    }
+                }
+            } else {
+                ERRORS(7);
+            }
+        } else {
+            ERRORS(2);
+        }
     }
 
     private static void INSTRUCCIONES() {
@@ -236,14 +443,42 @@ public class Syntaxis {
                 esp = "\",\", \"=\", \";\" o \"[\"";
                 break;
             case 7:
-                esp = "\"]\"";
+                esp = "\"[\"";
                 break;
             case 8:
-                esp = "\"(\"";
+                esp = "\"]\"";
                 break;
             case 9:
+                esp = "\"(\"";
+                break;
+            case 10:
                 esp = "\")\"";
-            default: break;
+                break;
+            case 11:
+                esp = "\",\" o \"]\"";
+                break;
+            case 12:
+                esp = "\"==\", \"+!\", \"=+\", \"=-\", \"+!\" o \"-!\"";
+                break;
+            case 13:
+                esp = "\"!!\" o \"??\"";
+                break;
+            case 14:
+                esp = "un identificador, numero o \"[\"";
+                break;
+            case 15:
+                esp = "un identificador o numero";
+                break;
+            case 16:
+                esp = "identificador o \"]\"";
+                break;
+            case 17:
+                esp = "\";\"";
+                break;
+            default: 
+                System.out.println("\""+tokens.get(i)+"\" inesperado");
+                System.exit(1);
+                break;
         }
 
         System.err.println("Se esperaba "+esp+" se ha encontrado: \""+token+"\"");
