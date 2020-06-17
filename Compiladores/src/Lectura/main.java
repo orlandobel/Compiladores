@@ -13,11 +13,7 @@ public class main {
         Archivo archivo = new Archivo();
         char x = '\n';
         
-        System.out.println(archivo.cadenaAvil());
-        System.out.println(archivo.cadenaAvil());
-        System.out.println(archivo.cadenaAvil());
-        System.out.println(archivo.cadenaAvil());
-        System.out.println(archivo.cadenaAvil());
+        Syntaxis.CUERPO();
         
 //        for(int i=0;i<10;i++) {
 //            x = archivo.readCharacter();
