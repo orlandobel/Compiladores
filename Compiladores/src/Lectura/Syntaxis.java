@@ -271,7 +271,7 @@ public class Syntaxis {
 
     private static void FACTOR() {
         i++;
-        if(tokens.get(i).equals("IDENTIFICADOR") || tokens.get(i).equals("numero")) {
+        if(tokens.get(i).equals("IDENTIFICADOR") || tokens.get(i).equals("NUMERO")) {
 
         } else if(tokens.get(i).equals("[")) {
             EXPRESION();
@@ -295,7 +295,7 @@ public class Syntaxis {
                     LLAMAR();
                 }
                 break;
-            case "numero":
+            case "NUMERO":
                 break;
             default:
                 ERRORS(15);
@@ -374,7 +374,7 @@ public class Syntaxis {
                 }
                 INSTRUCCIONES();
                 break;
-            case "numero":
+            case "NUMERO":
                 EXPRESION();
                 break;
             case "return":
