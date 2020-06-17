@@ -25,7 +25,7 @@ public class Syntaxis {
         };
         String[] val = {
             "num",
-            "nombre",
+            "IDENTIFICADOR",
             "true",
             "false"
         };
@@ -99,7 +99,7 @@ public class Syntaxis {
         if(i+1 < tokens.size()) {
             TIPO();
             i++;
-            if(tokens.get(i).equals("nombre")) {
+            if(tokens.get(i).equals("IDENTIFICADOR")) {
                 i++;
                 if(tokens.get(i).equals("[")) {
                     if(!tokens.get(i+1).equals("]")) {
@@ -138,7 +138,7 @@ public class Syntaxis {
     private static void PARAMETRO() {
         TIPO();
         i++;
-        if(tokens.get(i).equals("nombre")) {
+        if(tokens.get(i).equals("IDENTIFICADOR")) {
             if(!tokens.get(i+1).equals("]")) {
                 i++;
                 if(tokens.get(i).equals(",")) {
@@ -271,7 +271,7 @@ public class Syntaxis {
 
     private static void FACTOR() {
         i++;
-        if(tokens.get(i).equals("nombre") || tokens.get(i).equals("numero")) {
+        if(tokens.get(i).equals("IDENTIFICADOR") || tokens.get(i).equals("numero")) {
 
         } else if(tokens.get(i).equals("[")) {
             EXPRESION();
@@ -289,7 +289,7 @@ public class Syntaxis {
     private static void ASIGNAR() {
         i++;
         switch(tokens.get(i)) {
-            case "nombre":
+            case "IDENTIFICADOR":
                 if(tokens.get(i+1).equals("[")) {
                     i--;
                     LLAMAR();
@@ -304,18 +304,18 @@ public class Syntaxis {
 
     private static void LLAMAR() {
         i++;
-        if(tokens.get(i).equals("nombre")) {
+        if(tokens.get(i).equals("IDENTIFICADOR")) {
             i++;
             if(tokens.get(i).equals("[")) {
                 if(!tokens.get(i+1).equals("]")) {
                     i++;
-                    if(tokens.get(i).equals("nombre")) {
+                    if(tokens.get(i).equals("IDENTIFICADOR")) {
                         if(!tokens.get(i+1).equals("]")) {
                             i++;
                             if(tokens.get(i).equals(",")) {
                                 while(tokens.get(i).equals(",")) {
                                     i++;
-                                    if(tokens.get(i).equals("nombre")) {
+                                    if(tokens.get(i).equals("IDENTIFICADOR")) {
                                         i++;
                                     } else {
                                         ERRORS(2);
@@ -351,11 +351,60 @@ public class Syntaxis {
     }
 
     private static void INSTRUCCIONES() {
-
+        switch(tokens.get(i+1)) {
+            case "num":
+            case "String":
+            case "bool":
+                VARIABLE();
+                INSTRUCCIONES();
+                break;
+            case "if":
+                IF();
+                INSTRUCCIONES();
+                break;
+            case "while":
+                BUCLE();
+                INSTRUCCIONES();
+                break;
+            case "IDENTIFICADOR":
+                if(tokens.get(i+2).equals("[")) {
+                    LLAMAR();
+                } else {
+                    EXPRESION();
+                }
+                INSTRUCCIONES();
+                break;
+            case "numero":
+                EXPRESION();
+                break;
+            case "return":
+                RETORNO();
+                break;
+            case ")":
+                break;
+            default:
+                ERRORS(-1);
+                break;
+        }
     }
 
     private static void RETORNO() {
+        i++;
+        if(tokens.get(i).equals("return")) {
+            i++;
+            if(tokens.get(i).equals("IDENTIFICADOR")) {
+                i++;
+                if(tokens.get(i).equals(";")) {
 
+                } else {
+                    ERRORS(17);
+                }
+            } else {
+                ERRORS(2);
+            }
+        } else {
+            ERRORS(-1);
+        }
     }
 
     private static void VALOR() {
@@ -369,7 +418,7 @@ public class Syntaxis {
 
     private static void AuxConst() {
         i++;
-        if(tokens.get(i).equals("nombre")) {
+        if(tokens.get(i).equals("IDENTIFICADOR")) {
             i++;
             if(tokens.get(i).equals("=")) {
                 VALOR();
@@ -395,7 +444,7 @@ public class Syntaxis {
 
     private static void AuxVar() {
         i++;
-        if(tokens.get(i).equals("nombre")) {
+        if(tokens.get(i).equals("IDENTIFICADOR")) {
             i++;
             switch(tokens.get(i)) {
                 case ",":
@@ -428,7 +477,7 @@ public class Syntaxis {
                 esp = "\"void\", \"num\", \"String\" o \"bool\"";
                 break;
             case 2:
-                esp = "un nombre o identificador";
+                esp = "un identificador";
                 break;
             case 3:
                 esp = "\"=\"";

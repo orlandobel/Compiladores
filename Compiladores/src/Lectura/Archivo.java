@@ -27,8 +27,8 @@ public class Archivo {
     private FileReader archivo;
     private BufferedReader lee;
     private char x;
-    public Archivo() {
 
+    public Archivo() {
         try {
             abre = new File("wop.txt");
 

@@ -2,7 +2,7 @@ Codigo de error = que se esperaba
 
 ERRORS(0) = const
 ERRORS(1) = tipos de datos
-ERRORS(2) = nombre o identificador
+ERRORS(2) = identificador
 ERRORS(3) = =
 ERRORS(4) = valor
 ERRORS(5) = , o ;
@@ -13,4 +13,8 @@ ERRORS(9) = (
 ERRORS(10) = )
 ERRORS(11) = , o ]
 ERRORS(12) = == =! =+ =- +! -!
-
+ERRORS(13) = !! ?? ]
+ERRORS(14) = identificador numero o [
+ERRORS(15) = identificador o numero
+ERRORS(16) = identificador o ]
+ERRORS(17) = ;
