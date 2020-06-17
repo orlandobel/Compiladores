@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package Lectura;
+
+import java.util.ArrayList;
+
 /**
  *
  * @author Alumno
@@ -12,7 +15,9 @@ public class main {
     public static void main(String args[]) {
         Archivo archivo = new Archivo();
         char x = '\n';
+        ArrayList<String> p = archivo.leerArchivo();
         
+        Syntaxis.setListTokens(t, p);
         Syntaxis.CUERPO();
         
 //        for(int i=0;i<10;i++) {
