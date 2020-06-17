@@ -6,17 +6,21 @@
 package Lectura;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Alumno
  */
-public class main {
+public class Main {
     public static void main(String args[]) {
         Archivo archivo = new Archivo();
-        char x = '\n';
+        Lexico lexico = new Lexico();
+
+//        char x = '\n';
         ArrayList<String> p = archivo.leerArchivo();
-        
+        List<String> t =lexico.generarTokens(p);
+
         Syntaxis.setListTokens(t, p);
         Syntaxis.CUERPO();
         

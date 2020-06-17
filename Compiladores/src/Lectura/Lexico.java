@@ -110,21 +110,23 @@ public class Lexico {
         
         return true;
     }
-    
-    public static void main(String[] args) {
-        Lexico l = new Lexico();
-        
-        Archivo a = new Archivo();
-        ArrayList<String> palabras = a.leerArchivo();
+
+    public List<String> generarTokens(ArrayList<String> p) {
+        List<String> tokens = new ArrayList<String>();
+
+        ArrayList<String> palabras = p;
         
         palabras.forEach(s -> {
             System.out.println("-----------------------");
             System.out.println("Analizando: "+s);
-            String res = l.verificar(s);
+            String res = this.verificar(s);
             System.out.println("Encontrado: "+res);
+            tokens.add(res);
         });
         
         System.out.println("\n"+identificadores);
+
+        return tokens;
     }
 }
 

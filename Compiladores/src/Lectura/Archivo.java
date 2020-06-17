@@ -48,7 +48,7 @@ public class Archivo {
         }
     }
     
-    public ArrayList leerArchivo() {
+    public ArrayList<String> leerArchivo() {
         ArrayList<String> palabras = new ArrayList<>();
         String aux = cadenaAvil();
         while(!aux.equals("\uffff")) {
