@@ -1,8 +1,8 @@
 const num _constante1 = 234;
 
-num NumeroA = 20, NumeroB =5;
+num NumeroA = 20, NumeroB = 5;
 
-main [](
+void main [](
  num res = 0;
  while [res =- _constante1](
   res += NumeroA+NumeroB;

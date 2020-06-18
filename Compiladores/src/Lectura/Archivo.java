@@ -30,7 +30,27 @@ public class Archivo {
 
     public Archivo() {
         try {
-            abre = new File("wop.txt");
+            abre = new File("Suma.wop");
+
+            if(abre != null) {
+                archivo = new FileReader(abre);
+                lee = new BufferedReader(archivo);
+                x = readCharacter();
+//                String aux;
+//                while((aux  = lee.readLine()) != null) {
+//                    System.out.println(aux);
+//                }
+            }
+        } catch(IOException e) {
+            JOptionPane.showMessageDialog(null, e + ""
+                    + "\nNo se ha encontrado el archivo",
+                    "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public Archivo(String path) {
+        try {
+            abre = new File("path");
 
             if(abre != null) {
                 archivo = new FileReader(abre);

@@ -17,17 +17,16 @@ public class Main {
         Archivo archivo = new Archivo();
         Lexico lexico = new Lexico();
 
-//        char x = '\n';
+
         ArrayList<String> p = archivo.leerArchivo();
         List<String> t =lexico.generarTokens(p);
-
+        System.out.println();
+        
         Syntaxis.setListTokens(t, p);
         Syntaxis.CUERPO();
         
-//        for(int i=0;i<10;i++) {
-//            x = archivo.readCharacter();
-//        }
-        
-        
+        /*p.forEach(s -> {
+            System.out.println(s);
+        });*/
     }
 }

@@ -9,7 +9,6 @@ public class Syntaxis {
     private static List<String> program;
 
     private static List<String> tipos;
-    private static List<String> valores;
     private static List<String> booleanos;
     private static List<String> operadores;
 
@@ -22,12 +21,6 @@ public class Syntaxis {
             "num",
             "String",
             "bool"
-        };
-        String[] val = {
-            "num",
-            "IDENTIFICADOR",
-            "true",
-            "false"
         };
         String[] bools = {
             "==",
@@ -51,7 +44,6 @@ public class Syntaxis {
         };
         
         tipos = Arrays.asList(tip);
-        valores = Arrays.asList(val);
         booleanos = Arrays.asList(bools);
         operadores = Arrays.asList(ops);
     }
@@ -62,6 +54,7 @@ public class Syntaxis {
             VARIABLE();
             FUN();
         }
+        System.out.println("Comilacion exitosa");
     }
 
     public static void TIPO() {
@@ -69,6 +62,7 @@ public class Syntaxis {
         if(tipos.contains(tokens.get(i))) {
 
         } else {
+            System.out.println("Error en TIPO");
             ERRORS(1);
         }
     }
@@ -78,20 +72,113 @@ public class Syntaxis {
             i++;
             if(tokens.get(i).equals("const")) {
                 TIPO();
-                AuxConst();
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    i++;
+                    if(tokens.get(i).equals("=")) {
+                        i++;
+                        if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
+                            AUX1();
+                        } else {
+                            ERRORS(4);
+                        }
+                    } else {
+                        ERRORS(3);
+                    }
+                } else {
+                    ERRORS(2);
+                }
             } else {
                 ERRORS(0);
             }
         }
     }
 
+    private static void AUX1() {
+        i++;
+        switch(tokens.get(i)) {
+            case ",":
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    i++;
+                    if(tokens.get(i).equals("=")) {
+                        i++;
+                        if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
+                            AUX1();
+                        } else {
+                            ERRORS(4);
+                        }
+                    } else {
+                        ERRORS(3);
+                    }
+                } else {
+                    ERRORS(2);
+                }
+                break;
+            case ";":
+                CONSTANTE();
+                break;
+            default:
+                ERRORS(5);
+                break;
+        }
+    }
+
     private static void VARIABLE() {
-        if(i+1 < tokens.size()) {
-            TIPO();
-            if(!tokens.get(i+2).equals("[")) {
-                AuxVar();
+        
+        TIPO();
+        if(!tokens.get(i+2).equals("[")) {
+            i++;
+            if(tokens.get(i).equals("IDENTIFICADOR")) {
+                AUX2();
+            } else {
+                ERRORS(2);
             }
-            
+        } else {
+            i--;
+        }
+    }
+
+    private static void AUX2() {
+        i++;
+        switch(tokens.get(i)) {
+            case ",":
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    AUX2();
+                }
+                break;
+            case "=":
+                ASIGNAR();
+                AUX3();
+                break;
+            case ";":
+                if(tipos.contains(tokens.get(i+1))) {
+                    VARIABLE();
+                }
+                break;
+            default:
+                ERRORS(6);
+        }
+    }
+
+    private static void AUX3() {
+        i++;
+        switch(tokens.get(i)) {
+            case ",":
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    AUX2();
+                }
+                break;
+            case ";":
+                if(tipos.contains(tokens.get(i+1))) {
+                    VARIABLE();
+                }
+                break;
+            default:
+                ERRORS(5);
+                break;
         }
     }
 
@@ -102,18 +189,14 @@ public class Syntaxis {
             if(tokens.get(i).equals("IDENTIFICADOR")) {
                 i++;
                 if(tokens.get(i).equals("[")) {
-                    if(!tokens.get(i+1).equals("]")) {
-                        PARAMETRO();
-                    }
+                    PARAMETRO();
 
                     i++;
                     if(tokens.get(i).equals("]")) {
                         i++;
                         if(tokens.get(i).equals("(")) {
-                            if(!tokens.get(i+1).equals(")")) {
-                                INSTRUCCIONES();
-                            }
-
+                            INSTRUCCIONES();
+                            
                             i++;
                             if(tokens.get(i).equals(")")) {
                                 FUN();
@@ -129,26 +212,29 @@ public class Syntaxis {
                 } else {
                     ERRORS(6);
                 }
-            } else {
-                ERRORS(2);
             }
         }
     }
 
     private static void PARAMETRO() {
-        TIPO();
-        i++;
-        if(tokens.get(i).equals("IDENTIFICADOR")) {
-            if(!tokens.get(i+1).equals("]")) {
-                i++;
-                if(tokens.get(i).equals(",")) {
-                    PARAMETRO();
-                } else {
-                    ERRORS(11);
-                }
+        if(!tokens.get(i+1).equals("]")) {
+            TIPO();
+            i++;
+            if(tokens.get(i).equals("IDENTIFICADOR")) {
+                AUX4();
             }
-        } else {
-            ERRORS(2);
+        }
+        
+    }
+
+    private static void AUX4() {
+        if(!tokens.get(i+1).equals("]")) {
+            i++;
+            if(tokens.get(i).equals(",")) {
+                PARAMETRO();
+            } else {
+                ERRORS(11);
+            }
         }
     }
 
@@ -162,13 +248,44 @@ public class Syntaxis {
                 if(tokens.get(i).equals("]")) {
                     i++;
                     if(tokens.get(i).equals("(")) {
-                        if(!tokens.get(i+1).equals(")")) {
-                            INSTRUCCIONES();
-                        }
-                        
+                        INSTRUCCIONES();
+
                         i++;
                         if(tokens.get(i).equals(")")) {
 
+                        } else {
+                            ERRORS(10);
+                        }
+                    } else {
+                        ERRORS(9);
+                    }
+                } else {
+                    ERRORS(11);
+                }
+            } else {
+                ERRORS(7);
+            }
+        } else {
+            ERRORS(-1);
+        }
+    }
+
+    private static void IF() {
+        i++;
+        if(tokens.get(i).equals("if")) {
+            i++;
+            if(tokens.get(i).equals("[")) {
+                CONDICIONAL();
+
+                i++;
+                if(tokens.get(i).equals("]")) {
+                    i++;
+                    if(tokens.get(i).equals("(")) {
+                        INSTRUCCIONES();
+
+                        i++;
+                        if(tokens.get(i).equals(")")) {
+                            AUX5();
                         } else {
                             ERRORS(10);
                         }
@@ -186,80 +303,73 @@ public class Syntaxis {
         }
     }
 
-    private static void IF() {
-        i++;
-        if(tokens.get(i).equals("if")) {
+    private static void AUX5() {
+        if(!tipos.contains(tokens.get(i+1))
+         && !tokens.get(i+1).equals("IDENTIFICADOR")
+         && !tokens.get(i+1).equals("NUMERO")
+         && !tokens.get(i+1).equals("if")
+         && !tokens.get(i+1).equals("while")
+         && !tokens.get(i+1).equals(")")
+         && !tokens.get(i+1).equals("return")) {
             i++;
-            if(tokens.get(i).equals("[")) {
-                CONDICIONAL();
-                
+            if(tokens.get(i).equals("else")) {
                 i++;
-                if(tokens.get(i).equals("]")) {
+                if(tokens.get(i).equals("(")) {
+                    INSTRUCCIONES();
+
                     i++;
-                    if(tokens.get(i).equals("(")) {
-                        if(!tokens.get(i+1).equals(")")) {
-                            INSTRUCCIONES();
-                        } 
-                        
-                        i++;
-                        if(tokens.get(i).equals(")")) {
-                            if(tokens.get(i+1).equals("else")) {
-                                i = i+2;
-                                if(tokens.get(i).equals("(")) {
-                                    if(!tokens.get(i+1).equals(")")) {
-                                        INSTRUCCIONES();
-                                    }
+                    if(tokens.get(i).equals(")")) {
 
-                                    i++;
-                                    if(tokens.get(i).equals(")")) {
-
-                                    } else {
-                                        ERRORS(10);
-                                    }
-                                } else {
-                                    ERRORS(9);
-                                }
-                            }
-                        } else {
-                            ERRORS(10);
-                        }
                     } else {
-                        ERRORS(9);
+                        ERRORS(10);
                     }
                 } else {
-                    ERRORS(11);
+                    ERRORS(9);
                 }
             } else {
-                ERRORS(7);
+                ERRORS(-1);;
             }
-        } else {
-            ERRORS(-1);
         }
     }
 
     private static void CONDICIONAL() {
         EXPRESION();
+        AUX6();
+    }
+
+    private static void AUX6() {
         if(!tokens.get(i+1).equals("]")) {
             i++;
             if(booleanos.contains(tokens.get(i))) {
                 EXPRESION();
-                if(!tokens.get(i+1).equals("]")) {
-                    i++;
-                    if(tokens.get(i).equals("!!") || tokens.get(i).equals("??")) {
-                        CONDICIONAL();
-                    } else {
-                        ERRORS(13);
-                    }
-                }
+                AUX7();
             } else {
                 ERRORS(12);
             }
         }
     }
 
+    private static void AUX7() {
+        if(!tokens.get(i+1).equals("]")) {
+            i++;
+            if(tokens.get(i).equals("!!") || tokens.get(i).equals("??")) {
+                CONDICIONAL();
+            } else {
+                ERRORS(13);
+            }
+        }
+    }
+
     private static void EXPRESION() {
         FACTOR();
-        if(!booleanos.contains(tokens.get(i+1)) && !tokens.get(i+1).equals("!!") && !tokens.get(i+1).equals("??") && !tokens.get(i).equals("]")) {
+        AUX8();
+    }
+
+    private static void AUX8() {
+        if(!booleanos.contains(tokens.get(i+1))
+         && !tokens.get(i+1).equals("!!")
+         && !tokens.get(i+1).equals("??")
+         && !tokens.get(i+1).equals(";")) {
             i++;
             if(operadores.contains(tokens.get(i))) {
                 EXPRESION();
@@ -271,34 +381,38 @@ public class Syntaxis {
 
     private static void FACTOR() {
         i++;
-        if(tokens.get(i).equals("IDENTIFICADOR") || tokens.get(i).equals("NUMERO")) {
+        switch(tokens.get(i)) {
+            case "IDENTIFICADOR":
+            case "NUMERO":
+                break;
+            case "[":
+                EXPRESION();
+                i++;
+                if(tokens.get(i).equals("]")) {
 
-        } else if(tokens.get(i).equals("[")) {
-            EXPRESION();
-            i++;
-            if(tokens.get(i).equals("]")) {
-
-            } else {
-                ERRORS(8);
-            }
-        } else {
-            ERRORS(14);
+                } else {
+                    ERRORS(8);
+                }
+            default:
+                ERRORS(14);
+                break;
         }
     }
 
     private static void ASIGNAR() {
         i++;
         switch(tokens.get(i)) {
+            case "NUMERO":
+                break;
             case "IDENTIFICADOR":
-                if(tokens.get(i+1).equals("[")) {
+                if(tokens.get(i+1).equals("[")){ 
                     i--;
                     LLAMAR();
                 }
                 break;
-            case "NUMERO":
-                break;
             default:
                 ERRORS(15);
+                break;
         }
     }
 
@@ -307,161 +421,117 @@ public class Syntaxis {
         if(tokens.get(i).equals("IDENTIFICADOR")) {
             i++;
             if(tokens.get(i).equals("[")) {
-                if(!tokens.get(i+1).equals("]")) {
+                AUX9();
+
+                i++;
+                if(tokens.get(i).equals("]")) {
                     i++;
-                    if(tokens.get(i).equals("IDENTIFICADOR")) {
-                        if(!tokens.get(i+1).equals("]")) {
-                            i++;
-                            if(tokens.get(i).equals(",")) {
-                                while(tokens.get(i).equals(",")) {
-                                    i++;
-                                    if(tokens.get(i).equals("IDENTIFICADOR")) {
-                                        i++;
-                                    } else {
-                                        ERRORS(2);
-                                    }
-                                }
-                                i--;
-                            } else {
-                                ERRORS(11);
-                            }
-                        }
+                    if(tokens.get(i).equals(";")) {
 
-                        i++;
-                        if(tokens.get(i).equals("]")) {
-                            i++;
-                            if(tokens.get(i).equals(";")) {
-
-                            } else {
-                                ERRORS(17);
-                            }
-                        } else {
-                            ERRORS(11);
-                        }
                     } else {
-                        ERRORS(16);
+                        ERRORS(17);
                     }
+                } else {
+                    ERRORS(8);
                 }
             } else {
                 ERRORS(7);
-            }
-        } else {
-            ERRORS(2);
-        }
-    }
-
-    private static void INSTRUCCIONES() {
-        switch(tokens.get(i+1)) {
-            case "num":
-            case "String":
-            case "bool":
-                VARIABLE();
-                INSTRUCCIONES();
-                break;
-            case "if":
-                IF();
-                INSTRUCCIONES();
-                break;
-            case "while":
-                BUCLE();
-                INSTRUCCIONES();
-                break;
-            case "IDENTIFICADOR":
-                if(tokens.get(i+2).equals("[")) {
-                    LLAMAR();
-                } else {
-                    EXPRESION();
-                }
-                INSTRUCCIONES();
-                break;
-            case "NUMERO":
-                EXPRESION();
-                break;
-            case "return":
-                RETORNO();
-                break;
-            case ")":
-                break;
-            default:
-                ERRORS(-1);
-                break;
-        }
-    }
-
-    private static void RETORNO() {
-        i++;
-        if(tokens.get(i).equals("return")) {
-            i++;
-            if(tokens.get(i).equals("IDENTIFICADOR")) {
-                i++;
-                if(tokens.get(i).equals(";")) {
-
-                } else {
-                    ERRORS(17);
-                }
-            } else {
-                ERRORS(2);
             }
         } else {
             ERRORS(-1);
         }
     }
 
-    private static void VALOR() {
-        i++;
-        if(valores.contains(tokens.get(i))) {
-
-        } else {
-            ERRORS(4);
-        }
-    }
-
-    private static void AuxConst() {
-        i++;
-        if(tokens.get(i).equals("IDENTIFICADOR")) {
+    private static void AUX9() {
+        if(!tokens.get(i+1).equals("]")) {
             i++;
-            if(tokens.get(i).equals("=")) {
-                VALOR();
-                i++;
-                switch(tokens.get(i)) {
-                    case ",":
-                        AuxConst();
-                        break;
-                    case ";":
-                        CONSTANTE();
-                        break;
-                    default: 
-                        ERRORS(5);
-                        break;
-                } 
+            if(tokens.get(i).equals("IDENTIFICADOR")) {
+                AUX10();
             } else {
-                ERRORS(3);
+                ERRORS(2);
             }
-        } else {
-            ERRORS(2);
         }
     }
 
-    private static void AuxVar() {
-        i++;
-        if(tokens.get(i).equals("IDENTIFICADOR")) {
+    private static void AUX10() {
+        if(!tokens.get(i+1).equals("]")) {
             i++;
-            switch(tokens.get(i)) {
-                case ",":
-                    AuxVar();
-                    break;
-                case "=":
-                    ASIGNAR();
-                    break;
-                case ";":
-                    VARIABLE();
-                    break;
-                default: 
-                    ERRORS(6);
-                    break;
+            if(tokens.get(i).equals(",")) {
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    AUX10();
+                } else {
+                    ERRORS(2);
+                }
+            } else {
+                ERRORS(11);
             }
-        } else {
-            ERRORS(2);
+        }
+    }
+
+    private static void INSTRUCCIONES() {
+        AUX11();
+        RETORNO();
+    }
+
+    private static void AUX11() {
+        if(!tokens.get(i+1).equals("return")
+         && !tokens.get(i+1).equals(")")) {
+
+            
+             if(tipos.contains(tokens.get(i+1))) {
+                VARIABLE();
+                System.out.println(tokens.get(i+1));    
+                AUX11();
+             } else {
+                switch(tokens.get(i+1)) {
+                    case "if":
+                        IF();
+                        AUX11();
+                        break;
+                    case "while":
+                        BUCLE();
+                        AUX11();
+                        break;
+                    case "NUMERO":
+                    case "[":
+                        EXPRESION();
+                        AUX11();
+                        break;
+                    case "IDENTIFICADOR":
+                        if(tokens.get(i+2).equals("[")) {
+                            LLAMAR();
+                        } else {
+                            EXPRESION();
+                        }
+                        AUX11();
+                        break;
+                    default:
+                        ERRORS(-1);
+                        break;
+                }
+            }
+        }
+    }
+
+    private static void RETORNO() {
+        if(!tokens.get(i+1).equals(")")) {
+            i++;
+            if(tokens.get(i).equals("return")) {
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    i++;
+                    if(tokens.get(i).equals(";")) {
+
+                    } else {
+                        ERRORS(17);
+                    }
+                } else {
+                    ERRORS(2);
+                }
+            } else {
+                ERRORS(-1);
+            }
         }
     }
 

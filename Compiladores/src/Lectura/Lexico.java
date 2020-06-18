@@ -39,6 +39,7 @@ public class Lexico {
           "else",
           "true",
           "false",
+          "return",
           "!!",
           "??",
           "=+",
@@ -64,6 +65,7 @@ public class Lexico {
           "]",
           "(",
           ")",
+          ",",
           ";"
         };
         
@@ -74,11 +76,11 @@ public class Lexico {
     public String verificar(String s) {
         if(tabla.contains(s)) {
             return s;
+        }  else if(numValido(s)){
+            return "NUMERO";
         } else if(palabraValida(s)) {
             identificadores.add(s);
             return "IDENTIFICADOR";
-        } else if(numValido(s)){
-            return "NUMERO";
         }
         
         return "ERROR";
@@ -86,7 +88,7 @@ public class Lexico {
     
     private boolean caracterValido(byte x){
         //char x = readCharacter();
-        return (x > 64 && x < 91 ) || (x > 96 && x < 123 ) || (x == 95); 
+        return (x > 64 && x < 91 ) || (x > 96 && x < 123 ) || (x == 95) || (x > 47 && x < 58); 
     }
     
     private boolean numValido(String s){
@@ -124,7 +126,7 @@ public class Lexico {
             tokens.add(res);
         });
         
-        System.out.println("\n"+identificadores);
+        //System.out.println("\n"+identificadores);
 
         return tokens;
     }
