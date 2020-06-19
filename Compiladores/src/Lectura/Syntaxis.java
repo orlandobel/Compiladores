@@ -54,7 +54,7 @@ public class Syntaxis {
             VARIABLE();
             FUN();
         }
-        System.out.println("Comilacion exitosa");
+        System.out.println("Compilacion exitosa");
     }
 
     public static void TIPO() {
@@ -68,28 +68,30 @@ public class Syntaxis {
     }
 
     private static void CONSTANTE() {
-        if(!tipos.contains(tokens.get(i+1))) {
-            i++;
-            if(tokens.get(i).equals("const")) {
-                TIPO();
+        if(i+1 < tokens.size()) {
+            if(!tipos.contains(tokens.get(i+1))) {
                 i++;
-                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                if(tokens.get(i).equals("const")) {
+                    TIPO();
                     i++;
-                    if(tokens.get(i).equals("=")) {
+                    if(tokens.get(i).equals("IDENTIFICADOR")) {
                         i++;
-                        if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
-                            AUX1();
+                        if(tokens.get(i).equals("=")) {
+                            i++;
+                            if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
+                                AUX1();
+                            } else {
+                                ERRORS(4);
+                            }
                         } else {
-                            ERRORS(4);
+                            ERRORS(3);
                         }
                     } else {
-                        ERRORS(3);
+                        ERRORS(2);
                     }
                 } else {
-                    ERRORS(2);
+                    ERRORS(0);
                 }
-            } else {
-                ERRORS(0);
             }
         }
     }
@@ -125,17 +127,18 @@ public class Syntaxis {
     }
 
     private static void VARIABLE() {
-        
-        TIPO();
-        if(!tokens.get(i+2).equals("[")) {
-            i++;
-            if(tokens.get(i).equals("IDENTIFICADOR")) {
-                AUX2();
+        if(i+1 < tokens.size()) {
+            TIPO();
+            if(!tokens.get(i+2).equals("[")) {
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    AUX2();
+                } else {
+                    ERRORS(2);
+                }
             } else {
-                ERRORS(2);
+                i--;
             }
-        } else {
-            i--;
         }
     }
 
@@ -369,6 +372,7 @@ public class Syntaxis {
         if(!booleanos.contains(tokens.get(i+1))
          && !tokens.get(i+1).equals("!!")
          && !tokens.get(i+1).equals("??")
+         && !tokens.get(i+1).equals("]")
          && !tokens.get(i+1).equals(";")) {
             i++;
             if(operadores.contains(tokens.get(i))) {
@@ -480,8 +484,7 @@ public class Syntaxis {
 
             
              if(tipos.contains(tokens.get(i+1))) {
-                VARIABLE();
-                System.out.println(tokens.get(i+1));    
+                VARIABLE();    
                 AUX11();
              } else {
                 switch(tokens.get(i+1)) {
@@ -503,10 +506,15 @@ public class Syntaxis {
                             LLAMAR();
                         } else {
                             EXPRESION();
+                            i++;
+                            if(tokens.get(i).equals(";")) {
+
+                            }
                         }
                         AUX11();
                         break;
                     default:
+                        i++;
                         ERRORS(-1);
                         break;
                 }

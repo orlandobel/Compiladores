@@ -3,9 +3,11 @@ const num _constante1 = 234;
 num NumeroA = 20, NumeroB = 5;
 
 void main [](
- num res = 0;
- while [res =- _constante1](
-  res += NumeroA+NumeroB;
- )
- return res; 
+    num res = 0;
+    if[res =- _constante1](
+        while [res =- _constante1](
+            res += NumeroA+NumeroB;
+        )
+    )
+    return res; 
 )

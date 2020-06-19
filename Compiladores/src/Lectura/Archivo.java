@@ -100,17 +100,23 @@ public class Archivo {
     private boolean numValido(char x){
         return ( (byte)x>47 && (byte)x<58 ); 
     }
+
+    private boolean simValido(char x) {
+        return ((byte)x == 33) || ((byte)x == 42) || ((byte)x == 43) ||
+               ((byte)x == 45) || ((byte)x == 47) || ((byte)x == 61) ||
+               ((byte)x == 63);
+    }
     
-     public String cadenaAvil(){
+     public String cadenaAvil() {
         String aux = "";
 //        System.out.println(x);
 
-        if (caracterValido(x)){
+        if (caracterValido(x)) {
             aux =""+x;
             x = readCharacter();
 //            System.out.println(x);
 
-            while (caracterValido(x) || numValido(x)){
+            while (caracterValido(x) || numValido(x)) {
                 aux +=x;
                 x = readCharacter();
 //                System.out.println(x);
@@ -135,54 +141,13 @@ public class Archivo {
                     }
                 }
             }
-        } else if(x == (byte)205) {
+        } else if(simValido(x)) {
             aux += x;
-            x = readCharacter();
-            if(x == (byte)255 || x == (byte)45 || x == (byte)43 || x == (byte)33) {
+            x = this.readCharacter();
+
+            while(simValido(x)) {
                 aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)33) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)33) {
-                aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)63) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)63) {
-                aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)45) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)33 || x == (byte)45 || x == (byte)205) {
-                aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)43) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)33 || x == (byte)43 || x == (byte)205) {
-                aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)42) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)42 || x ==(byte)205) {
-                aux += x;
-                x = readCharacter();
-            }
-        } else if(x == (byte)47) {
-            aux += x;
-            x = readCharacter();
-            if(x == (byte)47 || x ==(byte)205) {
-                aux += x;
-                x = readCharacter();
+                x = this.readCharacter();
             }
         } else {
             aux += x;
