@@ -8,6 +8,8 @@ void main [](
         while [res =- _constante1](
             res += NumeroA+NumeroB;
         )
+    ) else (
+        res = -1;
     )
     return res; 
 )

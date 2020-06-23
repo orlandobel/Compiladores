@@ -31,6 +31,7 @@ public class Syntaxis {
             "=!"
         };
         String[] ops = {
+            "=",
             "+",
             "-",
             "*",
@@ -389,6 +390,14 @@ public class Syntaxis {
             case "IDENTIFICADOR":
             case "NUMERO":
                 break;
+            case "-":
+                i++;
+                if(tokens.get(i).equals("NUMERO")) {
+
+                } else {
+                    ERRORS(4);
+                }
+                break;
             case "[":
                 EXPRESION();
                 i++;
@@ -406,6 +415,14 @@ public class Syntaxis {
     private static void ASIGNAR() {
         i++;
         switch(tokens.get(i)) {
+            case "-":
+                i++;
+                if(tokens.get(i).equals("NUMERO")) {
+                    
+                } else {
+                    ERRORS(4);
+                }
+                break;
             case "NUMERO":
                 break;
             case "IDENTIFICADOR":
