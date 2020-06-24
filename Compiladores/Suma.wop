@@ -2,10 +2,12 @@ const num _constante1 = 234;
 
 num NumeroA = 20, NumeroB = 5;
 
-void main [](
+void main[](
     num res = 0;
     if[res =- _constante1](
+        String s;
         while [res =- _constante1](
+            bool b;
             res += NumeroA+NumeroB;
         )
     ) else (

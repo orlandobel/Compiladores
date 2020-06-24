@@ -93,7 +93,7 @@ public class Lexico {
     
     private boolean numValido(String s){
         try {
-            double d = Double.parseDouble(s);
+            Double.parseDouble(s);
         } catch (Exception e) {
             return false;
         }

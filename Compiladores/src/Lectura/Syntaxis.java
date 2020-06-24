@@ -2,16 +2,24 @@ package Lectura;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class Syntaxis {
+    /* Desplazamiento en el programa para el analicis y manejo de errores */
     private static int i = -1;
     private static List<String> tokens;
     private static List<String> program;
 
+    /* Para el manejo de tipados, y simbolos validos del lenguaje */
     private static List<String> tipos;
     private static List<String> booleanos;
     private static List<String> operadores;
 
+    /* Para el analisis semantico */
+    public static String tipado; // Manejo del tipado de la constante, variable o funcion evaluando
+    public static String identificador; // Manejo del identificador de la constante, variable o funcion evaluando
+
+    /* Inicio del analisis sintactico y semantico */
     public static void setListTokens(List<String> t, List<String> p) {
         tokens = t;
         program = p;
@@ -47,15 +55,17 @@ public class Syntaxis {
         tipos = Arrays.asList(tip);
         booleanos = Arrays.asList(bools);
         operadores = Arrays.asList(ops);
+
+        
     }
 
     public static void CUERPO() {
         if(!tokens.isEmpty()) {
             CONSTANTE();
-            VARIABLE();
+            VARIABLE(Semantica.tipadosGlobales,Semantica.identificadoresGlobales,true);
             FUN();
         }
-        System.out.println("Compilacion exitosa");
+        System.out.println("Compilacion exitosa\n");
     }
 
     public static void TIPO() {
@@ -74,8 +84,10 @@ public class Syntaxis {
                 i++;
                 if(tokens.get(i).equals("const")) {
                     TIPO();
+                    tipado = tokens.get(i);
                     i++;
                     if(tokens.get(i).equals("IDENTIFICADOR")) {
+                        identificador = program.get(i);
                         i++;
                         if(tokens.get(i).equals("=")) {
                             i++;
@@ -98,11 +110,19 @@ public class Syntaxis {
     }
 
     private static void AUX1() {
+        if(Semantica.exists(identificador))
+            ERRORS(18);
+
+        Semantica.tipadosGlobales.add(tipado);
+        Semantica.identificadoresGlobales.add(identificador);
+        Semantica.declaraciones.add("CONSTANTE");
+
         i++;
         switch(tokens.get(i)) {
             case ",":
                 i++;
                 if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = tokens.get(i);
                     i++;
                     if(tokens.get(i).equals("=")) {
                         i++;
@@ -186,20 +206,99 @@ public class Syntaxis {
         }
     }
 
+    private static void VARIABLE(List<Object> tip, List<Object>id, Boolean global) {
+        if(i+1 < tokens.size()) {
+            TIPO();
+            if(!tokens.get(i+2).equals("[")) {
+                tipado = tokens.get(i);
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = program.get(i);
+                    AUX2(tip,id,global);
+                } else {
+                    ERRORS(2);
+                }
+            } else {
+                i--;
+            }
+        }
+    }
+
+    private static void AUX2(List<Object> tip, List<Object>id, Boolean global) {
+        if(Semantica.exists(identificador))
+            ERRORS(18);
+            
+        tip.add(tipado);
+        id.add(identificador);
+        if(global)
+            Semantica.declaraciones.add("VARIABLE");
+
+        i++;
+        switch(tokens.get(i)) {
+            case ",":
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = program.get(i);
+                    AUX2(tip,id,global);
+                }
+                break;
+            case "=":
+                ASIGNAR();
+                AUX3(tip,id,global);
+                break;
+            case ";":
+                if(tipos.contains(tokens.get(i+1))) {
+                    VARIABLE(tip,id,global);
+                }
+                break;
+            default:
+                ERRORS(6);
+        }
+    }
+
+    private static void AUX3(List<Object> tip, List<Object>id, Boolean global) {
+        i++;
+        switch(tokens.get(i)) {
+            case ",":
+                i++;
+                if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = program.get(i);
+                    AUX2(tip,id,global);
+                }
+                break;
+            case ";":
+                if(tipos.contains(tokens.get(i+1))) {
+                    VARIABLE(tip,id,global);
+                }
+                break;
+            default:
+                ERRORS(5);
+                break;
+        }
+    }
+
     private static void FUN() {
         if(i+1 < tokens.size()) {
             TIPO();
+            tipado = tokens.get(i);
             i++;
             if(tokens.get(i).equals("IDENTIFICADOR")) {
+                identificador = program.get(i);
                 i++;
                 if(tokens.get(i).equals("[")) {
                     PARAMETRO();
-
+                    
                     i++;
                     if(tokens.get(i).equals("]")) {
                         i++;
                         if(tokens.get(i).equals("(")) {
-                            INSTRUCCIONES();
+                            if(Semantica.exists(identificador))
+                                ERRORS(18);
+
+                            Semantica.tipadosFunciones.add(tipado);
+                            Semantica.identificadoresFunciones.add(identificador);
+                            
+                            INSTRUCCIONES(Semantica.tipadosLocales,Semantica.identificadoresLocales);
                             
                             i++;
                             if(tokens.get(i).equals(")")) {
@@ -242,7 +341,7 @@ public class Syntaxis {
         }
     }
 
-    private static void BUCLE() {
+    private static void BUCLE(List<Object> tip, List<Object> id) {
         i++;
         if(tokens.get(i).equals("while")) {
             i++;
@@ -252,7 +351,7 @@ public class Syntaxis {
                 if(tokens.get(i).equals("]")) {
                     i++;
                     if(tokens.get(i).equals("(")) {
-                        INSTRUCCIONES();
+                        INSTRUCCIONES(tip,id);
 
                         i++;
                         if(tokens.get(i).equals(")")) {
@@ -274,7 +373,7 @@ public class Syntaxis {
         }
     }
 
-    private static void IF() {
+    private static void IF(List<Object> tip, List<Object> id) {
         i++;
         if(tokens.get(i).equals("if")) {
             i++;
@@ -285,11 +384,11 @@ public class Syntaxis {
                 if(tokens.get(i).equals("]")) {
                     i++;
                     if(tokens.get(i).equals("(")) {
-                        INSTRUCCIONES();
+                        INSTRUCCIONES(tip,id);
 
                         i++;
                         if(tokens.get(i).equals(")")) {
-                            AUX5();
+                            AUX5(tip,id);
                         } else {
                             ERRORS(10);
                         }
@@ -307,7 +406,7 @@ public class Syntaxis {
         }
     }
 
-    private static void AUX5() {
+    private static void AUX5(List<Object> tip, List<Object> id) {
         if(!tipos.contains(tokens.get(i+1))
          && !tokens.get(i+1).equals("IDENTIFICADOR")
          && !tokens.get(i+1).equals("NUMERO")
@@ -319,7 +418,7 @@ public class Syntaxis {
             if(tokens.get(i).equals("else")) {
                 i++;
                 if(tokens.get(i).equals("(")) {
-                    INSTRUCCIONES();
+                    INSTRUCCIONES(tip,id);
 
                     i++;
                     if(tokens.get(i).equals(")")) {
@@ -490,33 +589,39 @@ public class Syntaxis {
         }
     }
 
-    private static void INSTRUCCIONES() {
-        AUX11();
+    private static void INSTRUCCIONES(List<Object> tip, List<Object> id) {
+        List<Object> tipados = new ArrayList<>(); // Tipados loclaes
+        List<Object> identificadores = new ArrayList<>(); // Identificadores locales
+
+        tip.add(tipados);
+        id.add(identificadores);
+
+        AUX11(tipados,identificadores);
         RETORNO();
     }
 
-    private static void AUX11() {
+    private static void AUX11(List<Object> tip, List<Object> id) {
         if(!tokens.get(i+1).equals("return")
          && !tokens.get(i+1).equals(")")) {
 
             
              if(tipos.contains(tokens.get(i+1))) {
-                VARIABLE();    
-                AUX11();
+                VARIABLE(tip,id,false);    
+                AUX11(tip,id);
              } else {
                 switch(tokens.get(i+1)) {
                     case "if":
-                        IF();
-                        AUX11();
+                        IF(tip,id);
+                        AUX11(tip,id);
                         break;
                     case "while":
-                        BUCLE();
-                        AUX11();
+                        BUCLE(tip,id);
+                        AUX11(tip,id);
                         break;
                     case "NUMERO":
                     case "[":
                         EXPRESION();
-                        AUX11();
+                        AUX11(tip,id);
                         break;
                     case "IDENTIFICADOR":
                         if(tokens.get(i+2).equals("[")) {
@@ -528,7 +633,7 @@ public class Syntaxis {
 
                             }
                         }
-                        AUX11();
+                        AUX11(tip,id);
                         break;
                     default:
                         i++;
@@ -618,6 +723,10 @@ public class Syntaxis {
                 break;
             case 17:
                 esp = "\";\"";
+                break;
+            case 18:
+                System.out.println("El identificador \""+identificador+"\" ya esta en uso en el ambito global o local");
+                System.exit(1);
                 break;
             default: 
                 System.out.println("\""+tokens.get(i)+"\" inesperado");
