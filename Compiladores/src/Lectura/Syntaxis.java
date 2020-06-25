@@ -39,7 +39,7 @@ public class Syntaxis {
             "=!"
         };
         String[] ops = {
-            "=",
+            //"=",
             "+",
             "-",
             "*",
@@ -83,6 +83,9 @@ public class Syntaxis {
                 i++;
                 if(tokens.get(i).equals("const")) {
                     TIPO();
+                    if(tokens.get(i).equals("void"))
+                        ERRORS(21);
+
                     tipado = tokens.get(i);
                     i++;
                     if(tokens.get(i).equals("IDENTIFICADOR")) {
@@ -149,6 +152,9 @@ public class Syntaxis {
     private static void VARIABLE() {
         if(i+1 < tokens.size()) {
             TIPO();
+            if(tokens.get(i).equals("void"))
+                ERRORS(21);
+
             if(!tokens.get(i+2).equals("[")) {
                 i++;
                 if(tokens.get(i).equals("IDENTIFICADOR")) {
@@ -514,7 +520,12 @@ public class Syntaxis {
          && !tokens.get(i+1).equals(";")) {
             i++;
             if(operadores.contains(tokens.get(i))) {
+                String ident = identificador;
                 EXPRESION();
+                if(!Semantica.verificarTipado(ident, identificador))
+                    ERRORS(20);
+
+                identificador = ident;
             } else {
                 ERRORS(-1);
             }
@@ -525,10 +536,10 @@ public class Syntaxis {
         i++;
         switch(tokens.get(i)) {
             case "IDENTIFICADOR":
-                /*identificador = program.get(i);
+                identificador = program.get(i);
                 if(!Semantica.exists(identificador))
                     ERRORS(19);
-                break;*/
+                break;
             case "NUMERO":
                 break;
             case "-":
@@ -567,9 +578,11 @@ public class Syntaxis {
             case "NUMERO":
                 break;
             case "IDENTIFICADOR":
+                i--;
                 if(tokens.get(i+1).equals("[")){ 
-                    i--;
                     LLAMAR();
+                } else {
+                    EXPRESION();
                 }
                 break;
             default:
@@ -674,6 +687,13 @@ public class Syntaxis {
 
                         if(tokens.get(i+2).equals("[")) {
                             LLAMAR();
+                        } else if(tokens.get(i+2).equals("=")) {
+                            i += 2;
+                            ASIGNAR();
+                            i++;
+                            if(tokens.get(i).equals(";")) {
+
+                            }
                         } else {
                             EXPRESION();
                             i++;
@@ -778,6 +798,14 @@ public class Syntaxis {
                 break;
             case 19:
                 System.out.println("El identificador \""+identificador+"\" no ha sido declarado");
+                System.exit(1);
+                break;
+            case 20:
+                System.out.println("Error de tipos");
+                System.exit(1);
+                break;
+            case 21:
+                System.out.println("Las variables y constantes no pueden ser del tipo \"void\"");
                 System.exit(1);
                 break;
             default: 

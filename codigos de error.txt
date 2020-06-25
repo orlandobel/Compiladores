@@ -18,4 +18,8 @@ ERRORS(14) = identificador numero o [
 ERRORS(15) = identificador o numero
 ERRORS(16) = identificador o ]
 ERRORS(17) = ;
+
 ERRORS(18) = idedntificador en uso
+ERRORS(19) = identificadores no declarados
+ERRORs(20) = ERROR de tipos
+ERRORS(21) = variables o constantes de tipo void

@@ -35,8 +35,6 @@ public class Main {
 
         System.out.println("tipados en funciones: "+Semantica.tipadosLocales);
         System.out.println("identificadores en funciones: "+Semantica.identificadoresLocales);
-        /*p.forEach(s -> {
-            System.out.println(s);
-        });*/
+        
     }
 }

@@ -3,13 +3,12 @@ const num _constante1 = 234;
 num NumeroA = 20, NumeroB = 5;
 
 void main[](
-    num res = 0;
+    String res = 0;
     if[res =- _constante1](
         while [res =- _constante1](
             res += NumeroA+NumeroB;
         )
     ) else (
-        bool b;
         res = -1;
     )
     return res; 
