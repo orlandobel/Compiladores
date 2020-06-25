@@ -73,7 +73,6 @@ public class Syntaxis {
         if(tipos.contains(tokens.get(i))) {
 
         } else {
-            System.out.println("Error en TIPO");
             ERRORS(1);
         }
     }
@@ -284,21 +283,33 @@ public class Syntaxis {
             i++;
             if(tokens.get(i).equals("IDENTIFICADOR")) {
                 identificador = program.get(i);
+                if(Semantica.exists(identificador))
+                    ERRORS(18);
+
+                Semantica.tipadosFunciones.add(tipado);
+                Semantica.identificadoresFunciones.add(identificador);
+
                 i++;
                 if(tokens.get(i).equals("[")) {
-                    PARAMETRO();
+                    List<Object> tip = new ArrayList<>();
+                    List<Object> id = new ArrayList<>();
+
+                    Semantica.tipadosLocales.add(tip);
+                    Semantica.identificadoresLocales.add(id);
+
+                    List<Object> tipPar = new ArrayList<>();
+                    List<Object> idPar = new ArrayList<>();
+
+                    tip.add(tipPar);
+                    id.add(idPar);
+
+                    PARAMETRO(tipPar,idPar);
                     
                     i++;
                     if(tokens.get(i).equals("]")) {
                         i++;
-                        if(tokens.get(i).equals("(")) {
-                            if(Semantica.exists(identificador))
-                                ERRORS(18);
-
-                            Semantica.tipadosFunciones.add(tipado);
-                            Semantica.identificadoresFunciones.add(identificador);
-                            
-                            INSTRUCCIONES(Semantica.tipadosLocales,Semantica.identificadoresLocales);
+                        if(tokens.get(i).equals("(")) {            
+                            INSTRUCCIONES(tip,id);
                             
                             i++;
                             if(tokens.get(i).equals(")")) {
@@ -319,22 +330,30 @@ public class Syntaxis {
         }
     }
 
-    private static void PARAMETRO() {
+    private static void PARAMETRO(List<Object> tip, List<Object> id) {
         if(!tokens.get(i+1).equals("]")) {
             TIPO();
+            tipado = tokens.get(i);
             i++;
             if(tokens.get(i).equals("IDENTIFICADOR")) {
-                AUX4();
+                identificador = program.get(i);
+
+                if(Semantica.exists(identificador))
+                    ERRORS(18);
+
+                tip.add(tipado);
+                id.add(identificador);
+                AUX4(tip,id);
             }
         }
         
     }
 
-    private static void AUX4() {
+    private static void AUX4(List<Object> tip, List<Object> id) {
         if(!tokens.get(i+1).equals("]")) {
             i++;
             if(tokens.get(i).equals(",")) {
-                PARAMETRO();
+                PARAMETRO(tip,id);
             } else {
                 ERRORS(11);
             }
@@ -342,6 +361,12 @@ public class Syntaxis {
     }
 
     private static void BUCLE(List<Object> tip, List<Object> id) {
+        List<Object> tipados = new ArrayList<>(); // Tipados loclaes
+        List<Object> identificadores = new ArrayList<>(); // Identificadores locales
+
+        tip.add(tipados);
+        id.add(identificadores);
+
         i++;
         if(tokens.get(i).equals("while")) {
             i++;
@@ -351,7 +376,7 @@ public class Syntaxis {
                 if(tokens.get(i).equals("]")) {
                     i++;
                     if(tokens.get(i).equals("(")) {
-                        INSTRUCCIONES(tip,id);
+                        INSTRUCCIONES(tipados,identificadores);
 
                         i++;
                         if(tokens.get(i).equals(")")) {
@@ -374,6 +399,12 @@ public class Syntaxis {
     }
 
     private static void IF(List<Object> tip, List<Object> id) {
+        List<Object> tipados = new ArrayList<>(); // Tipados loclaes
+        List<Object> identificadores = new ArrayList<>(); // Identificadores locales
+
+        tip.add(tipados);
+        id.add(identificadores);
+
         i++;
         if(tokens.get(i).equals("if")) {
             i++;
@@ -384,7 +415,7 @@ public class Syntaxis {
                 if(tokens.get(i).equals("]")) {
                     i++;
                     if(tokens.get(i).equals("(")) {
-                        INSTRUCCIONES(tip,id);
+                        INSTRUCCIONES(tipados,identificadores);
 
                         i++;
                         if(tokens.get(i).equals(")")) {
@@ -414,11 +445,18 @@ public class Syntaxis {
          && !tokens.get(i+1).equals("while")
          && !tokens.get(i+1).equals(")")
          && !tokens.get(i+1).equals("return")) {
+
+            List<Object> tipados = new ArrayList<>(); // Tipados loclaes
+            List<Object> identificadores = new ArrayList<>(); // Identificadores locales
+
+            tip.add(tipados);
+            id.add(identificadores);
+
             i++;
             if(tokens.get(i).equals("else")) {
                 i++;
                 if(tokens.get(i).equals("(")) {
-                    INSTRUCCIONES(tip,id);
+                    INSTRUCCIONES(tipados,identificadores);
 
                     i++;
                     if(tokens.get(i).equals(")")) {
@@ -487,6 +525,10 @@ public class Syntaxis {
         i++;
         switch(tokens.get(i)) {
             case "IDENTIFICADOR":
+                /*identificador = program.get(i);
+                if(!Semantica.exists(identificador))
+                    ERRORS(19);
+                break;*/
             case "NUMERO":
                 break;
             case "-":
@@ -566,6 +608,10 @@ public class Syntaxis {
         if(!tokens.get(i+1).equals("]")) {
             i++;
             if(tokens.get(i).equals("IDENTIFICADOR")) {
+                identificador = program.get(i);
+                if(!Semantica.exists(identificador))
+                    ERRORS(19);
+
                 AUX10();
             } else {
                 ERRORS(2);
@@ -579,6 +625,10 @@ public class Syntaxis {
             if(tokens.get(i).equals(",")) {
                 i++;
                 if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = program.get(i);
+                    if(!Semantica.exists(identificador))
+                        ERRORS(19);
+                        
                     AUX10();
                 } else {
                     ERRORS(2);
@@ -590,13 +640,7 @@ public class Syntaxis {
     }
 
     private static void INSTRUCCIONES(List<Object> tip, List<Object> id) {
-        List<Object> tipados = new ArrayList<>(); // Tipados loclaes
-        List<Object> identificadores = new ArrayList<>(); // Identificadores locales
-
-        tip.add(tipados);
-        id.add(identificadores);
-
-        AUX11(tipados,identificadores);
+        AUX11(tip,id);
         RETORNO();
     }
 
@@ -624,6 +668,10 @@ public class Syntaxis {
                         AUX11(tip,id);
                         break;
                     case "IDENTIFICADOR":
+                        identificador = program.get(i+1);
+                        if(!Semantica.exists(identificador))
+                            ERRORS(19);
+
                         if(tokens.get(i+2).equals("[")) {
                             LLAMAR();
                         } else {
@@ -726,6 +774,10 @@ public class Syntaxis {
                 break;
             case 18:
                 System.out.println("El identificador \""+identificador+"\" ya esta en uso en el ambito global o local");
+                System.exit(1);
+                break;
+            case 19:
+                System.out.println("El identificador \""+identificador+"\" no ha sido declarado");
                 System.exit(1);
                 break;
             default: 

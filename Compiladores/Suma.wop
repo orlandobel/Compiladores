@@ -5,13 +5,18 @@ num NumeroA = 20, NumeroB = 5;
 void main[](
     num res = 0;
     if[res =- _constante1](
-        String s;
         while [res =- _constante1](
-            bool b;
             res += NumeroA+NumeroB;
         )
     ) else (
+        bool b;
         res = -1;
     )
     return res; 
+)
+
+num resta[num n1, num n2] (
+    num res = 0;
+    res = n1 - n2;
+    return res;
 )

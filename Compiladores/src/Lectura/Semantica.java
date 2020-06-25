@@ -35,8 +35,16 @@ public class Semantica {
 
         if(!tipadosFunciones.isEmpty()) {
             int index = tipadosFunciones.size()-1; 
+            //System.out.println(tipadosFunciones.size());
+            //System.out.println(identificadoresLocales.size());
             List<Object> list = (List<Object>)identificadoresLocales.get(index);
-    
+            List<Object> parametros = (List<Object>)list.get(0);
+            
+            if(!parametros.isEmpty()) {
+                if(parametros.contains(ident))
+                    return true;
+            }
+            
             if(exists(ident,list)) 
                 return true;
         }
