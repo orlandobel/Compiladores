@@ -93,7 +93,9 @@ public class Syntaxis {
                         i++;
                         if(tokens.get(i).equals("=")) {
                             i++;
-                            if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
+                            if(tokens.get(i).equals("NUMERO") 
+                             || tokens.get(i).equals("IDENTIFICADOR")
+                             || tokens.get(i).equals("STRING")) {
                                 AUX1();
                             } else {
                                 ERRORS(4);
@@ -119,6 +121,28 @@ public class Syntaxis {
         Semantica.identificadoresGlobales.add(identificador);
         Semantica.declaraciones.add("CONSTANTE");
 
+        switch(tokens.get(i)) {
+            case "NUMERO":
+                if(!tipado.equals("num"))
+                    ERRORS(20);
+
+                break;
+            case "IDENTIFICADOR":
+                String ident = identificador;
+                identificador = program.get(i);
+                if(!Semantica.verificarTipado(ident, identificador))
+                    ERRORS(20);
+                
+                break;
+            case "STRING":
+                if(!tipado.equals("String"))
+                    ERRORS(20);
+
+                while(tokens.get(i+1).equals("STRING")) {
+                    i++;
+                }
+        }
+
         i++;
         switch(tokens.get(i)) {
             case ",":
@@ -128,7 +152,13 @@ public class Syntaxis {
                     i++;
                     if(tokens.get(i).equals("=")) {
                         i++;
-                        if(tokens.get(i).equals("NUMERO") || tokens.get(i).equals("IDENTIFICADOR")) {
+                        if(tokens.get(i).equals("NUMERO") 
+                         || tokens.get(i).equals("IDENTIFICADOR")
+                         || tokens.get(i).equals("STRING")) {
+                            while(tokens.get(i+1).equals("STRING")) {
+                                i++;
+                            }
+
                             AUX1();
                         } else {
                             ERRORS(4);
@@ -142,68 +172,6 @@ public class Syntaxis {
                 break;
             case ";":
                 CONSTANTE();
-                break;
-            default:
-                ERRORS(5);
-                break;
-        }
-    }
-
-    private static void VARIABLE() {
-        if(i+1 < tokens.size()) {
-            TIPO();
-            if(tokens.get(i).equals("void"))
-                ERRORS(21);
-
-            if(!tokens.get(i+2).equals("[")) {
-                i++;
-                if(tokens.get(i).equals("IDENTIFICADOR")) {
-                    AUX2();
-                } else {
-                    ERRORS(2);
-                }
-            } else {
-                i--;
-            }
-        }
-    }
-
-    private static void AUX2() {
-        i++;
-        switch(tokens.get(i)) {
-            case ",":
-                i++;
-                if(tokens.get(i).equals("IDENTIFICADOR")) {
-                    AUX2();
-                }
-                break;
-            case "=":
-                ASIGNAR();
-                AUX3();
-                break;
-            case ";":
-                if(tipos.contains(tokens.get(i+1))) {
-                    VARIABLE();
-                }
-                break;
-            default:
-                ERRORS(6);
-        }
-    }
-
-    private static void AUX3() {
-        i++;
-        switch(tokens.get(i)) {
-            case ",":
-                i++;
-                if(tokens.get(i).equals("IDENTIFICADOR")) {
-                    AUX2();
-                }
-                break;
-            case ";":
-                if(tipos.contains(tokens.get(i+1))) {
-                    VARIABLE();
-                }
                 break;
             default:
                 ERRORS(5);
@@ -517,6 +485,7 @@ public class Syntaxis {
          && !tokens.get(i+1).equals("!!")
          && !tokens.get(i+1).equals("??")
          && !tokens.get(i+1).equals("]")
+         && !tokens.get(i+1).equals(",")
          && !tokens.get(i+1).equals(";")) {
             i++;
             if(operadores.contains(tokens.get(i))) {
@@ -527,6 +496,7 @@ public class Syntaxis {
 
                 identificador = ident;
             } else {
+                System.out.println("aqui");
                 ERRORS(-1);
             }
         }
@@ -568,21 +538,42 @@ public class Syntaxis {
         i++;
         switch(tokens.get(i)) {
             case "-":
-                i++;
-                if(tokens.get(i).equals("NUMERO")) {
+                if(!Semantica.getTipo(identificador).equals("num"))
+                    ERRORS(20);
                     
+                if(tokens.get(i+1).equals("NUMERO")) {
+                    EXPRESION();
                 } else {
                     ERRORS(4);
                 }
                 break;
             case "NUMERO":
+                if(!Semantica.getTipo(identificador).equals("num"))
+                    ERRORS(20);
+                
+                i--;
+                EXPRESION();
                 break;
             case "IDENTIFICADOR":
+                String ident = identificador;
+                identificador = program.get(i);
                 i--;
-                if(tokens.get(i+1).equals("[")){ 
+                if(tokens.get(i+2).equals("[")) { 
+                    if(!Semantica.verificarTipado(ident, identificador))
+                        ERRORS(20);
+                    
                     LLAMAR();
+                    i--;
                 } else {
                     EXPRESION();
+                }
+                break;
+            case "STRING":
+                if(!Semantica.getTipo(identificador).equals("String")) 
+                    ERRORS(20);
+
+                while(tokens.get(i+1).equals("STRING")) {
+                    i++;
                 }
                 break;
             default:
@@ -594,9 +585,10 @@ public class Syntaxis {
     private static void LLAMAR() {
         i++;
         if(tokens.get(i).equals("IDENTIFICADOR")) {
+            String funcion = program.get(i);
             i++;
             if(tokens.get(i).equals("[")) {
-                AUX9();
+                AUX9(funcion);
 
                 i++;
                 if(tokens.get(i).equals("]")) {
@@ -617,7 +609,7 @@ public class Syntaxis {
         }
     }
 
-    private static void AUX9() {
+    private static void AUX9(String funcion) {
         if(!tokens.get(i+1).equals("]")) {
             i++;
             if(tokens.get(i).equals("IDENTIFICADOR")) {
@@ -625,14 +617,17 @@ public class Syntaxis {
                 if(!Semantica.exists(identificador))
                     ERRORS(19);
 
-                AUX10();
+                if(!Semantica.verificarTipado(funcion, identificador, true))
+                    ERRORS(22);
+                
+                AUX10(funcion);
             } else {
                 ERRORS(2);
             }
         }
     }
 
-    private static void AUX10() {
+    private static void AUX10(String funcion) {
         if(!tokens.get(i+1).equals("]")) {
             i++;
             if(tokens.get(i).equals(",")) {
@@ -641,8 +636,11 @@ public class Syntaxis {
                     identificador = program.get(i);
                     if(!Semantica.exists(identificador))
                         ERRORS(19);
+                    
+                    if(!Semantica.verificarTipado(funcion, identificador, false))
+                        ERRORS(22);
                         
-                    AUX10();
+                    AUX10(funcion);
                 } else {
                     ERRORS(2);
                 }
@@ -658,7 +656,8 @@ public class Syntaxis {
     }
 
     private static void AUX11(List<Object> tip, List<Object> id) {
-        if(!tokens.get(i+1).equals("return")
+        if(
+        !tokens.get(i+1).equals("return")
          && !tokens.get(i+1).equals(")")) {
 
             
@@ -693,12 +692,16 @@ public class Syntaxis {
                             i++;
                             if(tokens.get(i).equals(";")) {
 
+                            } else {
+                                ERRORS(17);
                             }
                         } else {
                             EXPRESION();
                             i++;
                             if(tokens.get(i).equals(";")) {
 
+                            } else {
+                                ERRORS(17);
                             }
                         }
                         AUX11(tip,id);
@@ -718,6 +721,22 @@ public class Syntaxis {
             if(tokens.get(i).equals("return")) {
                 i++;
                 if(tokens.get(i).equals("IDENTIFICADOR")) {
+                    identificador = program.get(i);
+                    if(!Semantica.exists(identificador))
+                        ERRORS(19);
+                    
+                    int code;
+                    if((code = Semantica.verificarRetorno(identificador)) != 0) {
+                        switch(code) {
+                            case 1: 
+                                ERRORS(23);
+                                break;
+                            case 2:
+                                ERRORS(24);
+                                break;
+                        }
+                    }
+
                     i++;
                     if(tokens.get(i).equals(";")) {
 
@@ -801,11 +820,23 @@ public class Syntaxis {
                 System.exit(1);
                 break;
             case 20:
-                System.out.println("Error de tipos");
+                System.out.println("Tipos incompatibles");
                 System.exit(1);
                 break;
             case 21:
                 System.out.println("Las variables y constantes no pueden ser del tipo \"void\"");
+                System.exit(1);
+                break;
+            case 22:
+                System.out.println("Los tipos en los parametros no coinciden con los dados en la declaracion de la funcion");;
+                System.exit(1);
+                break;
+            case 23:
+                System.out.println("La funcion de tipo \"void\" no puede retornar nada");
+                System.exit(1);
+                break;
+            case 24:
+                System.out.println("El tipo de la funcion y el valor retornado no son compatibles");
                 System.exit(1);
                 break;
             default: 

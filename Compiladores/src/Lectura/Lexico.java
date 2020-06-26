@@ -26,6 +26,7 @@ import java.util.List;
 public class Lexico {
     private List<String> tabla;
     public static ArrayList<String> identificadores;
+    private Boolean str;
     
     public Lexico() {
         String[] palabras = {
@@ -71,16 +72,29 @@ public class Lexico {
         
         tabla = Arrays.asList(palabras);
         identificadores = new ArrayList<>();
+
+        str = false;
     }
     
     public String verificar(String s) {
-        if(tabla.contains(s)) {
-            return s;
-        }  else if(numValido(s)){
-            return "NUMERO";
-        } else if(palabraValida(s)) {
-            identificadores.add(s);
-            return "IDENTIFICADOR";
+        if(!str) {
+            if(s.equals("\"")){
+                str = true;
+                return "STRING";
+            }
+            if(tabla.contains(s)) {
+                return s;
+            }  else if(numValido(s)){
+                return "NUMERO";
+            } else if(palabraValida(s)) {
+                identificadores.add(s);
+                return "IDENTIFICADOR";
+            }
+        } else {
+            if(s.equals("\""))
+                str = false;
+            
+                return "STRING";
         }
         
         return "ERROR";

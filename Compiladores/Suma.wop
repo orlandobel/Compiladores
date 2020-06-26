@@ -1,21 +1,23 @@
 const num _constante1 = 234;
+const String str = "constante";
 
-num NumeroA = 20, NumeroB = 5;
-
-void main[](
-    String res = 0;
-    if[res =- _constante1](
-        while [res =- _constante1](
-            res += NumeroA+NumeroB;
-        )
-    ) else (
-        res = -1;
-    )
-    return res; 
-)
+num NumeroA = 20;
+num NumeroB = 5;
+String s = "20";
 
 num resta[num n1, num n2] (
     num res = 0;
     res = n1 - n2;
     return res;
+)
+
+void main[](
+    num res = 0;
+    if[res =- _constante1](
+        while [res =- _constante1](
+            res += NumeroA+NumeroB;
+        )
+    ) else (
+        res = resta[NumeroA,NumeroB];
+    )
 )

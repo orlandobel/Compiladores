@@ -14,6 +14,8 @@ public class Semantica {
     public static List<Object> tipadosLocales; // Tipados de las variables dentro de las funciones
     public static List<Object> identificadoresLocales; // Identificadores de las variables dentro de las funciones
 
+    private static int indexPar = -1; // recorre los parametros de una funcion
+
     static {
         tipadosGlobales = new ArrayList<>();
         identificadoresGlobales = new ArrayList<>();
@@ -81,13 +83,18 @@ public class Semantica {
         return false;
     }
 
-    private static String getTipo(String ident) {
+    public static String getTipo(String ident) {
         int i;
         String tipo = "";
         
         if(identificadoresGlobales.contains(ident)) {
             i = identificadoresGlobales.indexOf(ident);
             tipo = (String) tipadosGlobales.get(i);
+
+        } else if(identificadoresFunciones.contains(ident)) {
+            i = identificadoresFunciones.indexOf(ident);
+            tipo = (String) tipadosFunciones.get(i);
+            
         } else {
             int index = tipadosLocales.size()-1;
             List<Object> fun = (List<Object>) identificadoresLocales.get(index);
@@ -115,5 +122,50 @@ public class Semantica {
         }
 
         return tipo;
+    }
+
+    public static Boolean verificarTipado(String fun, String par, Boolean iniciar) {
+        if(iniciar) {
+            indexPar = 0;
+        }
+        
+        int index = identificadoresFunciones.indexOf(fun);
+        List<Object> funcion = (List<Object>) tipadosLocales.get(index);
+        List<Object> parametros = (List<Object>) funcion.get(0);
+
+        String tipo1 = (String) parametros.get(indexPar);
+        String tipo2 = getTipo(par);
+
+        if(!tipo1.equals(tipo2))
+            return false;
+
+        indexPar++;
+
+        return true;
+    }
+
+    public static int verificarRetorno(String ident) {
+        int index = tipadosFunciones.size()-1;
+        int status = -1;
+            /*
+             * 0 -> todo correcto
+             * 1 -> funcion void pero encontrado retorno
+             * 2 -> tipos incompatibles
+            */
+        String tipo = (String) tipadosFunciones.get(index);
+        String retorno = (ident.equals("")) ? "void" : getTipo(ident);
+        
+        if(tipo.equals("void")) {
+            if(retorno.equals("void"))
+                status = 0;
+            else 
+                status = 1;
+        } else if(tipo.equals(retorno)) {
+            status = 0;
+        } else {
+            status = 2;
+        }
+
+        return status;
     }
 }
