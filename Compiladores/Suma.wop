@@ -11,11 +11,16 @@ num resta[num n1, num n2] (
     return res;
 )
 
+num suma[num n1] (
+    num res =  NumeroA+n1;
+    return res;
+)
+
 void main[](
     num res = 0;
     if[res =- _constante1](
         while [res =- _constante1](
-            res += NumeroA+NumeroB;
+            res += suma[NumeroB];
         )
     ) else (
         res = resta[NumeroA,NumeroB];

@@ -39,7 +39,7 @@ public class Syntaxis {
             "=!"
         };
         String[] ops = {
-            //"=",
+            "=",
             "+",
             "-",
             "*",
@@ -686,7 +686,7 @@ public class Syntaxis {
 
                         if(tokens.get(i+2).equals("[")) {
                             LLAMAR();
-                        } else if(tokens.get(i+2).equals("=")) {
+                        } else if(operadores.contains(tokens.get(i+2))) {
                             i += 2;
                             ASIGNAR();
                             i++;
