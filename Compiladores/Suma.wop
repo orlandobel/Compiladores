@@ -20,7 +20,7 @@ void main[](
     num res = 0;
     if[res =- _constante1](
         while [res =- _constante1](
-            res += suma[NumeroB];
+            res = NumeroA + NumeroB;
         )
     ) else (
         res = resta[NumeroA,NumeroB];

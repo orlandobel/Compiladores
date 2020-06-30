@@ -15,11 +15,11 @@ import java.util.List;
  * @boleta 2018671281
  * @author Guillermo Ingacio Bautista García
  * @boleta 2018670021
- * @evidencia Compilador(sintaxis fase 1)
+ * @evidencia Compilador(semantico)
  * @programa Sistemas computacionales
- * @uniad de aprendizaje Construcción de analizadoes sintácticos
+ * @uniad de aprendizaje Analisis semantico y generacion de codigo intermedio
  * @maestra Karina Mejia Rodrígez 
- * @fecha de entrega 20/05/2020
+ * @fecha de entrega 29/06/2020
  * 
  */
 

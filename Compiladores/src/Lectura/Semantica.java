@@ -3,6 +3,21 @@ package Lectura;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ *
+ * @author Orlando Odiseo Belmonte Flores
+ * @boleta 2018671281
+ * @author Guillermo Ingacio Bautista García
+ * @boleta 2018670021
+ * @evidencia Compilador(semantico)
+ * @programa Sistemas computacionales
+ * @uniad de aprendizaje Analisis semantico y generacion de codigo intermedio
+ * @maestra Karina Mejia Rodrígez 
+ * @fecha de entrega 29/06/2020
+ * 
+ */
+
+
 public class Semantica {
     public static List<Object> tipadosGlobales; // Tipados de constantes y variables  globales
     public static List<Object> identificadoresGlobales; // Identificadores de constantes y variables globales

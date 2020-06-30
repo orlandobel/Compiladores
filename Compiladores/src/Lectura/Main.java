@@ -10,8 +10,18 @@ import java.util.List;
 
 /**
  *
- * @author Alumno
+ * @author Orlando Odiseo Belmonte Flores
+ * @boleta 2018671281
+ * @author Guillermo Ingacio Bautista García
+ * @boleta 2018670021
+ * @evidencia Compilador(semantico)
+ * @programa Sistemas computacionales
+ * @uniad de aprendizaje Analisis semantico y generacion de codigo intermedio
+ * @maestra Karina Mejia Rodrígez 
+ * @fecha de entrega 29/06/2020
+ * 
  */
+
 public class Main {
     public static void main(String args[]) {
         Archivo archivo = new Archivo();
